@@ -19,7 +19,7 @@ function GameApp(scene, num) {
 
   var context = FamousEngine.getContext('body');
 
-  var numAsteroids = num || 11;
+  var numAsteroids = num || 21;
   var asteroidNodes = [];
   var asteroidBodies = [];
   var asteroidViews = [];
@@ -53,10 +53,11 @@ function GameApp(scene, num) {
 
   shipSphere.setVelocity([0.1, 0.1, 0]);
 
-  var ship = new Mesh(shipNode, shipSphere).setGeometry('Sphere', { detail: 100 });
+  var ship = new Mesh(shipNode, shipSphere).setGeometry('Sphere', { detail: 50 });
+  shipSphere.setForce(10,10,10).setMomentum(50,50,50);
   for (var i = 0; i < numAsteroids; i++) {
     var asteroidSphere = new Sphere({
-      mass: 100,
+      mass: 10,
       radius: 25,
       position: asteroidNodes[i].position,
       velocity: [0.5, 0.5, 0.5]
@@ -69,7 +70,7 @@ function GameApp(scene, num) {
   }
 
   for (var i = 0; i < asteroidBodies.length-1; i++) {
-    var gravity = new Gravity1D(asteroidBodies[i], [shipSphere], {strength: 300});
+    var gravity = new Gravity3D(asteroidBodies[i], [shipSphere], {strength: 1});
     world.add(gravity);
   }
 
@@ -81,17 +82,28 @@ function GameApp(scene, num) {
     var time = clock.getTime();
     world.update(time);
     shipNode.setRotation(
-      time / 1500,
-      time / 1200,
-      time / 1300
+      time / 500,
+      time / 200,
+      time / 300
     );
+    // shipNode.setPosition(
+    //   shipNode.getPosition()[0] + 10*Math.random() - 5,
+    //   shipNode.getPosition()[1] + 10*Math.random() - 5,
+    //   shipNode.getPosition()[2] + 10*Math.random() - 5
+    //   );
+
+    // console.log(shipNode);
+    // console.log(shipSphere);
+    // console.log(shipSphere.getMomentum());
+    // console.log(shipSphere.getVelocity());
+    console.log(shipNode.getPosition());
+    console.log(shipSphere.getPosition());
     shipNode.setPosition(
-      shipNode.getPosition()[0] + 1,
-      shipNode.getPosition()[1] + 1,
-      shipNode.getPosition()[2] + 1
-      );
-
-
+      shipSphere.getPosition().x,
+      shipSphere.getPosition().y,
+      shipSphere.getPosition().z
+    );
+    shipNode.getPosition();
   // FamousEngine.pipe(scene);
   // context.add(scene);
 
