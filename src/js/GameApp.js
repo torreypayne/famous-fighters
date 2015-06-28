@@ -10,6 +10,8 @@ var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Particle = physics.Particle;
 var Sphere = physics.Sphere;
+var Asteroid = require('./Asteroid');
+var Ship = rquire('./Ship');
 
 var FamousEngine = require('famous/core/FamousEngine');
 
