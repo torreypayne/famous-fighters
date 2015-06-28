@@ -12,6 +12,7 @@ var Particle = physics.Particle;
 var Sphere = physics.Sphere;
 var Asteroid = require('./Asteroid');
 var Ship = require('./Ship');
+var Game = require('./Game');
 
 var FamousEngine = require('famous/core/FamousEngine');
 
@@ -19,62 +20,26 @@ function GameApp(scene, num) {
   var world = new physics.PhysicsEngine();
   var camera = new Camera(scene).setDepth(1000);
 
-  var context = FamousEngine.getContext('body');
+  var numAsteroids = num || 5;
+  var asteroids = [];
 
-  var numAsteroids = num || 21;
-  var asteroidNodes = [];
-  var asteroidBodies = [];
-  var asteroidViews = [];
-
-  var gameNode = scene.addChild()
-      .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(0.5, 0.5, 0.5)
-      .setMountPoint(0.5, 0.5, 0.5)
-      .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(200, 200, 200);
-
-  var shipNode = gameNode.addChild()
-      .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(0.5, 0.5, 0.5)
-      .setMountPoint(0.5, 0.5, 0.5)
-      .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(200, 200, 200);
+  var gameView = new Game(scene);
+  var ship = new Ship(gameView);
+  world.add(ship.body);
 
   for (var i = 0; i < numAsteroids; i++) {
-    var asteroidNode = gameNode.addChild()
-      .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(2*Math.random(), 2*Math.random(), 2*Math.random())
-      .setMountPoint(0.5, 0.5, 0.5)
-      .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(75, 75, 75);
-    asteroidNodes.push(asteroidNode);
+    var asteroid = new Asteroid(gameView);
+    var gravity = new Gravity3D(
+      asteroid.physBody.sphere,
+      ship.physBody.sphere,
+      { strength: 1 }
+    );
+    world.add(asteroid.body);
+    // world.add(gravity);
+    asteroids.push(asteroid);
   }
 
-  var shipSphere = new Sphere({ mass: 50, radius: 50, position: shipNode.position });
-  world.add(shipSphere);
-
-  shipSphere.setVelocity([0.1, 0.1, 0]);
-
-  var ship = new Mesh(shipNode, shipSphere).setGeometry('Sphere', { detail: 50 });
-  shipSphere.setForce(10,10,10).setMomentum(50,50,50);
-  for (var i = 0; i < numAsteroids; i++) {
-    var asteroidSphere = new Sphere({
-      mass: 10,
-      radius: 25,
-      position: asteroidNodes[i].position,
-      velocity: [0.5, 0.5, 0.5]
-    });
-    asteroidSphere.setVelocity(2*Math.random(), 2*Math.random(), 2*Math.random());
-    var asteroid = new Mesh(asteroidNodes[i], asteroidSphere).setGeometry('Sphere');
-    world.add(asteroidSphere);
-    asteroidBodies.push(asteroidSphere);
-    asteroidViews.push(asteroid);
-  }
-
-  for (var i = 0; i < asteroidBodies.length-1; i++) {
-    var gravity = new Gravity3D(asteroidBodies[i], [shipSphere], {strength: 1});
-    world.add(gravity);
-  }
+  world.add(asteroids.concat([ship]));
 
   var lightNode = scene.addChild().setAlign(0.5, 0.5, 0.5).setPosition(0, 0, 250);
   var light = new PointLight(lightNode).setColor(new Color('white'));
@@ -83,37 +48,12 @@ function GameApp(scene, num) {
   FamousEngine.getClock().setInterval(function() {
     var time = clock.getTime();
     world.update(time);
-    shipNode.setRotation(
-      time / 500,
-      time / 200,
-      time / 300
-    );
-    console.log(shipNode.getPosition());
-    console.log(shipSphere.getPosition());
-    shipNode.setPosition(
-      shipSphere.getPosition().x,
-      shipSphere.getPosition().y,
-      shipSphere.getPosition().z
-    );
-    shipNode.getPosition();
-  // FamousEngine.pipe(scene);
-  // context.add(scene);
+    ship.update(time);
 
     for (var j = 0; j < numAsteroids; j++) {
-      var pos = asteroidNodes[j].getPosition();
-      asteroidNodes[j].setRotation(
-        time / 300,
-        time / 300,
-        time / 300
-      );
-      asteroidNodes[j].setPosition(
-        asteroidBodies[j].getPosition().x * 1.05,
-        asteroidBodies[j].getPosition().y * 1.05,
-        asteroidBodies[j].getPosition().z * 1.05
-      );
+      asteroids[j].update(time);
     }
-    // FamousEngine.update();
-  }, 16);
+  }, 5);
 
 }
 
