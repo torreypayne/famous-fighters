@@ -88,16 +88,6 @@ function GameApp(scene, num) {
       time / 200,
       time / 300
     );
-    // shipNode.setPosition(
-    //   shipNode.getPosition()[0] + 10*Math.random() - 5,
-    //   shipNode.getPosition()[1] + 10*Math.random() - 5,
-    //   shipNode.getPosition()[2] + 10*Math.random() - 5
-    //   );
-
-    // console.log(shipNode);
-    // console.log(shipSphere);
-    // console.log(shipSphere.getMomentum());
-    // console.log(shipSphere.getVelocity());
     console.log(shipNode.getPosition());
     console.log(shipSphere.getPosition());
     shipNode.setPosition(
