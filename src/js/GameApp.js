@@ -21,16 +21,20 @@ function GameApp(scene, num) {
   var world = new physics.PhysicsEngine();
   var camera = new Camera(scene).setDepth(1000);
 
-  var numAsteroids = num || 5;
+  var numAsteroids = num || 20;
   var asteroids = [];
   var asteroidBodies = [];
+  var asteroidsCollision = new Collision();
+  var shipCollision = new Collision();
+  var gameCollisions = [asteroidsCollision, shipCollision];
+  world.add(gameCollisions);
 
   var gameView = new Game(scene);
   var ship = new Ship(gameView);
   world.add(ship.body);
 
   for (var i = 0; i < numAsteroids; i++) {
-    var asteroid = new Asteroid(gameView, ship);
+    var asteroid = new Asteroid(gameView, ship, world);
     var gravity = new Gravity3D(
       asteroid.physBody.sphere,
       ship.physBody.sphere,
@@ -44,10 +48,10 @@ function GameApp(scene, num) {
 
   var objs = asteroids.concat([ship]);
 
-  var asteroidCollision = new Collision(asteroidBodies);
-  // var shipCollision
-
-  world.add(objs);
+  // var asteroidCollision = new Collision(asteroidBodies);
+  // var shipCollision = new Collision(asteroidBodies.concat(ship.body));
+  // world.add(asteroidCollision);
+  // world.add(objs);
 
   var lightNode = scene.addChild().setAlign(0.5, 0.5, 0.5).setPosition(0, 0, 250);
   var light = new PointLight(lightNode).setColor(new Color('white'));
@@ -57,7 +61,8 @@ function GameApp(scene, num) {
     var time = clock.getTime();
     world.update(time);
     ship.update(time);
-    console.log(asteroidCollision);
+    // console.log(asteroidCollision);
+    // console.log(shipCollision);
 
     for (var j = 0; j < numAsteroids; j++) {
       asteroids[j].update(time);

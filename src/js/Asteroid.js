@@ -6,30 +6,37 @@ var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
 
-function AsteroidView(game, ship) {
+function AsteroidView(game, physBody) {
+  this.physBody = physBody;
   this.node = game.node.addChild();
   this.node
       .setOrigin(0.5, 0.5, 0.5)
       .setAlign(
-        ship.physBody.x() + 2*Math.random(),
-        ship.physBody.y() + 2*Math.random(),
-        2*Math.random()
+        physBody.x(),
+        physBody.y(),
+        physBody.z()
       )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(75, 75, 75);
 }
 
-function AsteroidSphere(node) {
+function AsteroidSphere(ship, world) {
+  this.world = world;
   var options = {
-    mass: 10,
-    radius: 35,
+    mass: 1,
+    radius: 1,
   };
-  this.node = node;
   this.sphere = new Sphere(options);
   this.sphere
-      .setPosition(node.getPosition()[0], node.getPosition()[1], node.getPosition()[2])
+      .setPosition(
+        ship.physBody.x() + 2*Math.random(),
+        ship.physBody.y() + 2*Math.random(),
+        2*Math.random()
+      )
       .setVelocity(10, 10, 10*Math.random() - 1);
+  world.add(this.sphere);
+  
 }
 
 AsteroidSphere.prototype.x = function() {
@@ -50,10 +57,10 @@ function AsteroidMesh(node) {
       .setGeometry('Sphere');
 }
 
-function Asteroid(game, ship) {
-  this.view = new AsteroidView(game, ship);
+function Asteroid(game, ship, world) {
+  this.physBody = new AsteroidSphere(ship, world);
+  this.view = new AsteroidView(game, this.physBody);
   this.node = this.view.node;
-  this.physBody = new AsteroidSphere(this.node);
   this.body = this.physBody.sphere;
   this.mesh = new AsteroidMesh(this.node);
 }

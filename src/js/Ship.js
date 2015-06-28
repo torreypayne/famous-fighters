@@ -18,16 +18,12 @@ function ShipView(game) {
 
 function ShipSphere(node) {
   var options = {
-    mass: 1,
-    radius: 10
+    mass: .5,
+    radius: 1
   };
   this.sphere = new Sphere(options);
   this.sphere
-      .setPosition(
-        node.getPosition()[0],
-        node.getPosition()[1],
-        node.getPosition()[2]
-      )
+      .setPosition(0.5, 0.5, 0.5)
       .setForce(.1,.1,.1)
       .setMomentum(.45,.45,.45)
       .setVelocity(10,10,0);
@@ -51,10 +47,11 @@ function ShipMesh(node) {
       .setGeometry('Sphere', { detail: 50 });
 }
 
-function Ship(game) {
-  this.view = new ShipView(game);
+function Ship(game, world) {
+  this.world = world;
+  this.physBody = new ShipSphere(world);
+  this.view = new ShipView(game, this.physBody);
   this.node = this.view.node;
-  this.physBody = new ShipSphere(this.node);
   this.body = this.physBody.sphere;
   this.mesh = new ShipMesh(this.node);
 }
