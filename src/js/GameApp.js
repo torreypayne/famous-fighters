@@ -28,14 +28,14 @@ function GameApp(scene, num) {
   world.add(ship.body);
 
   for (var i = 0; i < numAsteroids; i++) {
-    var asteroid = new Asteroid(gameView);
+    var asteroid = new Asteroid(gameView, ship);
     var gravity = new Gravity3D(
       asteroid.physBody.sphere,
       ship.physBody.sphere,
       { strength: 1 }
     );
     world.add(asteroid.body);
-    // world.add(gravity);
+    world.add(gravity);
     asteroids.push(asteroid);
   }
 

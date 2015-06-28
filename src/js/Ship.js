@@ -20,7 +20,6 @@ function ShipSphere(node) {
   var options = {
     mass: 1,
     radius: 10
-    // position: node.position,
   };
   this.sphere = new Sphere(options);
   this.sphere
@@ -29,21 +28,21 @@ function ShipSphere(node) {
         node.getPosition()[1],
         node.getPosition()[2]
       )
-      .setForce(1,1,1)
+      .setForce(.1,.1,.1)
       .setMomentum(.45,.45,.45)
-      .setVelocity([.1,.1,0]);
+      .setVelocity(10,10,0);
 }
 
 ShipSphere.prototype.x = function() {
-  return this.sphere.getPosition()[0];
+  return this.sphere.getPosition().x;
 }
 
 ShipSphere.prototype.y = function() {
-  return this.sphere.getPosition()[1];
+  return this.sphere.getPosition().y;
 }
 
 ShipSphere.prototype.z = function() {
-  return this.sphere.getPosition()[2];
+  return this.sphere.getPosition().z;
 }
 
 function ShipMesh(node) {
