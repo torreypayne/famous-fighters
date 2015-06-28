@@ -13,6 +13,7 @@ var Sphere = physics.Sphere;
 var Asteroid = require('./Asteroid');
 var Ship = require('./Ship');
 var Game = require('./Game');
+var Collision = require('famous/physics/constraints/Collision');
 
 var FamousEngine = require('famous/core/FamousEngine');
 
@@ -22,6 +23,7 @@ function GameApp(scene, num) {
 
   var numAsteroids = num || 5;
   var asteroids = [];
+  var asteroidBodies = [];
 
   var gameView = new Game(scene);
   var ship = new Ship(gameView);
@@ -37,9 +39,15 @@ function GameApp(scene, num) {
     world.add(asteroid.body);
     world.add(gravity);
     asteroids.push(asteroid);
+    asteroidBodies.push(asteroid.body);
   }
 
-  world.add(asteroids.concat([ship]));
+  var objs = asteroids.concat([ship]);
+
+  var asteroidCollision = new Collision(asteroidBodies);
+  // var shipCollision
+
+  world.add(objs);
 
   var lightNode = scene.addChild().setAlign(0.5, 0.5, 0.5).setPosition(0, 0, 250);
   var light = new PointLight(lightNode).setColor(new Color('white'));
@@ -49,6 +57,7 @@ function GameApp(scene, num) {
     var time = clock.getTime();
     world.update(time);
     ship.update(time);
+    console.log(asteroidCollision);
 
     for (var j = 0; j < numAsteroids; j++) {
       asteroids[j].update(time);
