@@ -11,7 +11,7 @@ var Gravity3D = physics.Gravity3D;
 var Particle = physics.Particle;
 var Sphere = physics.Sphere;
 var Asteroid = require('./Asteroid');
-var Ship = rquire('./Ship');
+var Ship = require('./Ship');
 
 var FamousEngine = require('famous/core/FamousEngine');
 
@@ -64,7 +64,7 @@ function GameApp(scene, num) {
       position: asteroidNodes[i].position,
       velocity: [0.5, 0.5, 0.5]
     });
-    asteroidSphere.setForce(2*Math.random(), 2*Math.random(), 2*Math.random());
+    asteroidSphere.setVelocity(2*Math.random(), 2*Math.random(), 2*Math.random());
     var asteroid = new Mesh(asteroidNodes[i], asteroidSphere).setGeometry('Sphere');
     world.add(asteroidSphere);
     asteroidBodies.push(asteroidSphere);
@@ -116,11 +116,11 @@ function GameApp(scene, num) {
         time / 300,
         time / 300
       );
-      // asteroidNodes[j].setPosition(
-      //   asteroidNodes[j].getPosition()[0] * 1.05 + Math.random()*5 - 2.5,
-      //   asteroidNodes[j].getPosition()[1] * 1.05 + Math.random()*5 - 2.5,
-      //   asteroidNodes[j].getPosition()[2] * 1.05 + Math.random()*5 - 2.5
-      // );
+      asteroidNodes[j].setPosition(
+        asteroidBodies[j].getPosition().x * 1.05,
+        asteroidBodies[j].getPosition().y * 1.05,
+        asteroidBodies[j].getPosition().z * 1.05
+      );
     }
     // FamousEngine.update();
   }, 16);

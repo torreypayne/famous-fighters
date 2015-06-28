@@ -9,7 +9,7 @@ function AsteroidNode() {
   Node.call(this, arguments);
   this
       .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(2*Math.random(), 2*Math.random(), 2*Math.random());
+      .setAlign(2*Math.random(), 2*Math.random(), 2*Math.random())
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(75, 75, 75);
