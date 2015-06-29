@@ -25,48 +25,56 @@ function GameApp(scene, num) {
   var asteroids = [];
   var asteroidBodies = [];
   var asteroidsCollision = new Collision();
-  var shipCollision = new Collision();
-  var gameCollisions = [asteroidsCollision, shipCollision];
-  world.add(gameCollisions);
 
   var gameView = new Game(scene);
-  var ship = new Ship(gameView);
+  var ship = new Ship(gameView, world);
   world.add(ship.body);
 
   for (var i = 0; i < numAsteroids; i++) {
-    var asteroid = new Asteroid(gameView, ship, world);
+    var newAsteroid = false;
+    while (newAsteroid === false) {
+      var asteroid = new Asteroid(gameView, ship, world);
+      // shipCollision.addTarget(asteroid.body);
+      if (asteroid.collidesWithOthers(asteroids) === false) {
+        asteroidsCollision.addTarget(asteroid.body);
+        var shipCollision = new Collision([ship.body, asteroid.body]);
+        world.add(shipCollision);
+        newAsteroid = true;
+      } else {
+        asteroid.remove();
+      }
+    }
     var gravity = new Gravity3D(
-      asteroid.physBody.sphere,
-      ship.physBody.sphere,
-      { strength: 1 }
+      asteroid.body,
+      ship.body,
+      { strength: 10 }
     );
-    world.add(asteroid.body);
-    world.add(gravity);
     asteroids.push(asteroid);
     asteroidBodies.push(asteroid.body);
+    world.add(gravity);
   }
 
-  var objs = asteroids.concat([ship]);
+  world.add(asteroidsCollision);
+  console.log(asteroidsCollision);
 
-  // var asteroidCollision = new Collision(asteroidBodies);
-  // var shipCollision = new Collision(asteroidBodies.concat(ship.body));
-  // world.add(asteroidCollision);
-  // world.add(objs);
+  var objs = asteroids.concat([ship]);
 
   var lightNode = scene.addChild().setAlign(0.5, 0.5, 0.5).setPosition(0, 0, 250);
   var light = new PointLight(lightNode).setColor(new Color('white'));
   var clock = FamousEngine.getClock();
 
-  FamousEngine.getClock().setInterval(function() {
+  clock.setInterval(function() {
     var time = clock.getTime();
     world.update(time);
     ship.update(time);
-    // console.log(asteroidCollision);
-    // console.log(shipCollision);
+    if (ship)
 
     for (var j = 0; j < numAsteroids; j++) {
       asteroids[j].update(time);
+      // console.log(world.constraints[j+1]);
+      console.log(world.constraints[j].broadPhase.overlaps);
     }
+    // console.log(world.constraints[numAsteroids + 1]);
   }, 5);
 
 }

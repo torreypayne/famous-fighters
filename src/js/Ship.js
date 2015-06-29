@@ -1,22 +1,32 @@
 var Node = require('famous/core/Node');
 var Mesh = require('famous/webgl-renderables/Mesh');
 var math = require('famous/math');
+var Color = require('famous/utilities/Color');
 var physics = require('famous/physics');
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
 
-function ShipView(game) {
+function ShipView(game, body) {
   this.node = game.node.addChild();
   this.node
       .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(0.5, 0.5, 0.5)
+      .setAlign(
+        body.x()*.1,
+        body.y()*.1,
+        body.z()*.1
+      )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(200, 200, 200);
+      .setAbsoluteSize(50, 50, 50);
+      // .setAbsoluteSize(
+      //   body.sphere.size[0],
+      //   body.sphere.size[1],
+      //   body.sphere.size[2]
+      // );
 }
 
-function ShipSphere(node) {
+function ShipSphere(world) {
   var options = {
     mass: .5,
     radius: 1
@@ -24,9 +34,9 @@ function ShipSphere(node) {
   this.sphere = new Sphere(options);
   this.sphere
       .setPosition(0.5, 0.5, 0.5)
-      .setForce(.1,.1,.1)
-      .setMomentum(.45,.45,.45)
-      .setVelocity(10,10,0);
+      .setForce(.1, .1, .1)
+      .setMomentum(.45, .45, .45)
+      .setVelocity(15,15,20);
 }
 
 ShipSphere.prototype.x = function() {
@@ -44,12 +54,15 @@ ShipSphere.prototype.z = function() {
 function ShipMesh(node) {
   this.skin = new Mesh(node);
   this.skin
-      .setGeometry('Sphere', { detail: 50 });
+      .setGeometry('Sphere', { detail: 50 })
+      .setBaseColor(new Color('red'))
+      ;
 }
 
 function Ship(game, world) {
   this.world = world;
   this.physBody = new ShipSphere(world);
+  this.world.add(this.physBody);
   this.view = new ShipView(game, this.physBody);
   this.node = this.view.node;
   this.body = this.physBody.sphere;
