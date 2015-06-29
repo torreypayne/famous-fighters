@@ -86,7 +86,7 @@ function GameApp(scene, num) {
       bullets[i].update();
     }
   }, 5);
-
+  
   document.addEventListener('click', function(e) {
     var bullet = new Bullet(gameView, ship, world, asteroids);
     bullets.push(bullet);
