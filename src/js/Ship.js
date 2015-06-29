@@ -19,12 +19,20 @@ function ShipView(game, body) {
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(50, 50, 50);
-      // .setAbsoluteSize(
-      //   body.sphere.size[0],
-      //   body.sphere.size[1],
-      //   body.sphere.size[2]
-      // );
 }
+
+// function ShipSphere2(world) {
+//   var options = {
+//     mass: .5,
+//     radius: 1
+//   };
+//   Sphere.call(this, options);
+//   this
+//       .setPosition(0.5, 0.5, 0.5)
+//       .setForce(.1, .1, .1)
+//       .setMomentum(.45, .45, .45)
+//       .setVelocity(15,15,20);
+// }
 
 function ShipSphere(world) {
   var options = {
@@ -62,6 +70,7 @@ function ShipMesh(node) {
 function Ship(game, world) {
   this.world = world;
   this.physBody = new ShipSphere(world);
+  // this.physBody2 = new ShipSphere2(world);
   this.world.add(this.physBody);
   this.view = new ShipView(game, this.physBody);
   this.node = this.view.node;

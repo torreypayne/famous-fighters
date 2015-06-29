@@ -24,7 +24,8 @@ function AsteroidView(game, physBody) {
 }
 
 AsteroidView.prototype.remove = function() {
-  // this.game.node.removeChild(this.node);
+  debugger;
+  this.game.node.removeChild(this.node);
 }
 
 function AsteroidSphere(ship, world) {
@@ -34,14 +35,15 @@ function AsteroidSphere(ship, world) {
     radius: 1,
   };
   this.sphere = new Sphere(options);
+  var sign = Math.round(2*Math.random()-1);
   this.sphere
       .setPosition(
-        ship.physBody.x() + 20*Math.random(),
-        ship.physBody.y() + 20*Math.random(),
+        ship.physBody.x()+5 + sign*20*Math.random(),
+        ship.physBody.y()+5 + sign*20*Math.random(),
         2*Math.random()
       )
-      .setVelocity(10, 10, 10*Math.random() - 1);
-  world.add(this.sphere);
+      .setVelocity(sign*10, sign*10, sign*10*Math.random() - 1);
+  // world.add(this.sphere);
 
 }
 
@@ -71,17 +73,23 @@ function AsteroidMesh(node) {
       .setGeometry('Sphere');
 }
 
-function Asteroid(game, ship, world) {
+function Asteroid(game, ship, world, asteroids) {
   this.physBody = new AsteroidSphere(ship, world);
+  while (this.isCollidedWith(asteroids)) {
+    this.physBody.remove();
+    this.physBody = new AsteroidSphere(ship, world);
+  }
+  this.body = this.physBody.sphere;
+  world.add(this.body);
+
   this.view = new AsteroidView(game, this.physBody);
   this.node = this.view.node;
-  this.body = this.physBody.sphere;
   this.mesh = new AsteroidMesh(this.node);
 }
 
 Asteroid.prototype.remove = function() {
   this.physBody.remove();
-  this.view.remove();
+  // this.view.remove();
 }
 
 Asteroid.prototype.update = function() {
@@ -105,7 +113,7 @@ Asteroid.prototype.z = function() {
 }
 
 
-Asteroid.prototype.collidesWithOthers = function(asteroids) {
+Asteroid.prototype.isCollidedWith = function(asteroids) {
   var tooClose = false;
   asteroids.forEach(function(asteroid) {
     var diffs = [
