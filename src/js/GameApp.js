@@ -71,7 +71,7 @@ function GameApp(scene, num) {
       console.log(obj);
       obj.forEach(function(collision) {
         console.log(collision);
-        if (collision && collision[0] === ship.body && time < 1000) {
+        if (collision && collision[0] === ship.body && time < 2000) {
           var asteroid = new Asteroid(game, ship, world, asteroids);
           collision[1] = asteroid.body;
           collision = new Collision();
