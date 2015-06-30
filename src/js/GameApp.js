@@ -5,38 +5,40 @@ var Color = require('famous/utilities/Color');
 var DOMElement = require('famous/dom-renderables/DOMElement');
 var math = require('famous/math');
 var physics = require('famous/physics');
+var Force = require('famous/physics/forces/Force');
 var Transform = require('famous/core/Transform');
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Particle = physics.Particle;
 var Sphere = physics.Sphere;
 var Asteroid = require('./Asteroid');
+var AsteroidSphere = require('./AsteroidSphere');
 var Ship = require('./Ship');
 var Game = require('./Game');
 var Vec3 = require('famous/math/Vec3');
 var Collision = require('famous/physics/constraints/Collision');
 var Bullet = require('./Bullet');
 var FamousEngine = require('famous/core/FamousEngine');
+var UIEvent = require('famous/dom-renderers/events/UIEvent');
 
 function GameApp(scene, num) {
   var world = new physics.PhysicsEngine();
   var camera = new Camera(scene).setDepth(1000);
-  var numAsteroids = num || 20;
+  var numAsteroids = num || 10;
   var asteroids = [];
   var asteroidBodies = [];
   var bullets = [];
 
-  var gameView = new Game(scene);
-  var ship = new Ship(gameView, world);
+  var game = new Game(scene, world);
+  var ship = new Ship(game, world);
   world.add(ship.body);
 
   for (var i = 0; i < numAsteroids; i++) {
-    var asteroid = new Asteroid(gameView, ship, world, asteroids);
+    var asteroid = new Asteroid(game, ship, world, asteroids);
     var shipCollision = new Collision([ship.body, asteroid.body]);
     world.add(shipCollision);
-    asteroids.push(asteroid);
+    game.addAsteroid(asteroid);
     asteroidBodies.push(asteroid.body);
-    world.add(gravity);
   }
 
   var gravity = new Gravity3D(null, world.bodies,
@@ -51,8 +53,6 @@ function GameApp(scene, num) {
 
   var asteroidsCollision = new Collision(asteroidBodies);
   world.add(asteroidsCollision);
-  console.log(asteroidsCollision);
-  console.log(world.constraints);
 
   var objs = asteroids.concat([ship]);
 
@@ -66,18 +66,21 @@ function GameApp(scene, num) {
     ship.update(time);
 
     for (var j = 0; j < numAsteroids; j++) {
-      asteroids[j].update(time);
-      // console.log(world.constraints[j+1]);
+      game.asteroids[j].update(time);
       var obj = world.constraints[j].broadPhase.overlaps;
       console.log(obj);
       obj.forEach(function(collision) {
         console.log(collision);
-        if (collision[0] && collision[0] === ship.body) {
+        if (collision && collision[0] === ship.body && time < 1000) {
+          var asteroid = new Asteroid(game, ship, world, asteroids);
+          collision[1] = asteroid.body;
+          collision = new Collision();
+        } else if (collision && collision[0] === ship.body) {
           debugger;
           console.log("GAME OVER!");
         } else {
           console.log("Collided Asteroid removed!");
-          collision[0].remove() && collision[1].remove();
+          collision && collision[0].remove() && collision[1].remove();
         }
       });
     }
@@ -86,13 +89,6 @@ function GameApp(scene, num) {
       bullets[i].update();
     }
   }, 5);
-  
-  document.addEventListener('click', function(e) {
-    var bullet = new Bullet(gameView, ship, world, asteroids);
-    bullets.push(bullet);
-    console.log(bullet);
-    console.log("shot bullet!");
-  });
 
 }
 
