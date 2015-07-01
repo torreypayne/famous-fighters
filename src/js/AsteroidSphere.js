@@ -13,21 +13,31 @@ function AsteroidSphere(ship, world) {
     mass: 30,
     radius: 1,
   };
+  this.ship = ship;
   this.sphere = new Sphere(options);
   var sign = Math.round(2*Math.random()-1);
   this.sphere
       .setPosition(
-        ship.physBody.x()+5 + sign*20*Math.random(),
-        ship.physBody.y()+5 + sign*20*Math.random(),
+        ship.physBody.x()+5 + sign*10*Math.random(),
+        ship.physBody.y()+5 + sign*10*Math.random(),
         2*Math.random()
       )
-      .setVelocity(sign*10, sign*10, sign*10*Math.random() - 1);
-  // world.add(this.sphere);
+      .setVelocity(sign*150, sign*150, sign*150*Math.random() - 1);
 
 }
 
 AsteroidSphere.prototype.remove = function() {
   this.world.removeBody(this.sphere);
+}
+
+AsteroidSphere.prototype.changePosition = function() {
+  var sign = Math.round(2*Math.random()-1);
+  this.sphere
+      .setPosition(
+        this.ship.physBody.x()+5 + sign*50*Math.random(),
+        this.ship.physBody.y()+5 + sign*50*Math.random(),
+        2*Math.random()
+      );
 }
 
 AsteroidSphere.prototype.x = function() {

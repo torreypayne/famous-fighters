@@ -24,22 +24,24 @@ var UIEvent = require('famous/dom-renderers/events/UIEvent');
 function GameApp(scene, num) {
   var world = new physics.PhysicsEngine();
   var camera = new Camera(scene).setDepth(1000);
-  var numAsteroids = num || 10;
+  var numAsteroids = num || 60;
   var asteroids = [];
   var asteroidBodies = [];
   var bullets = [];
 
   var game = new Game(scene, world);
-  var ship = new Ship(game, world);
-  world.add(ship.body);
+  game.addUIEvent('click');
+  game.addUIEvent('keydown');
+  game.start();
+  // var ship = new Ship(game, world);
+  // world.add(ship.body);
+  // game.addShip(ship);
 
-  for (var i = 0; i < numAsteroids; i++) {
-    var asteroid = new Asteroid(game, ship, world, asteroids);
-    var shipCollision = new Collision([ship.body, asteroid.body]);
-    world.add(shipCollision);
-    game.addAsteroid(asteroid);
-    asteroidBodies.push(asteroid.body);
-  }
+  // for (var i = 0; i < numAsteroids; i++) {
+  //   var asteroid = new Asteroid(game, ship, world, asteroids);
+  //   game.addAsteroid(asteroid);
+  //   asteroidBodies.push(asteroid.body);
+  // }
 
   var gravity = new Gravity3D(null, world.bodies,
     {
@@ -49,46 +51,42 @@ function GameApp(scene, num) {
     }
   );
   world.add(gravity);
-  console.log(gravity);
 
-  var asteroidsCollision = new Collision(asteroidBodies);
-  world.add(asteroidsCollision);
 
-  var objs = asteroids.concat([ship]);
+  // var objs = asteroids.concat([ship]);
 
   var lightNode = scene.addChild().setAlign(0.5, 0.5, 0.5).setPosition(0, 0, 250);
   var light = new PointLight(lightNode).setColor(new Color('white'));
   var clock = FamousEngine.getClock();
 
-  clock.setInterval(function() {
-    var time = clock.getTime();
-    world.update(time);
-    ship.update(time);
-
-    for (var j = 0; j < numAsteroids; j++) {
-      game.asteroids[j].update(time);
-      var obj = world.constraints[j].broadPhase.overlaps;
-      console.log(obj);
-      obj.forEach(function(collision) {
-        console.log(collision);
-        if (collision && collision[0] === ship.body && time < 2000) {
-          var asteroid = new Asteroid(game, ship, world, asteroids);
-          collision[1] = asteroid.body;
-          collision = new Collision();
-        } else if (collision && collision[0] === ship.body) {
-          debugger;
-          console.log("GAME OVER!");
-        } else {
-          console.log("Collided Asteroid removed!");
-          collision && collision[0].remove() && collision[1].remove();
-        }
-      });
-    }
-
-    for (var i=0; i < bullets.length; i++) {
-      bullets[i].update();
-    }
-  }, 5);
+  // clock.setInterval(function() {
+  //   var time = clock.getTime();
+  //   world.update(time);
+  //   ship.update(asteroids, time);
+  //
+  //   for (var j = 0; j < numAsteroids; j++) {
+  //     game.asteroids[j].update(time);
+  //   }
+  //
+  //   for (var i=0; i < bullets.length; i++) {
+  //     bullets[i].update();
+  //   }
+  // }, 5);
+  //
+  // clock.setInterval(function() {
+  //   for (var i = 0; i < numAsteroids/10; i++) {
+  //     var asteroid = new Asteroid(game, ship, world, asteroids);
+  //     game.addAsteroid(asteroid);
+  //     asteroidBodies.push(asteroid.body);
+  //   }
+  // }, 1000);
+  //
+  // document.addEventListener('click', function(e) {
+  //   var bullet = new Bullet(game, ship, world, asteroids);
+  //   bullets.push(bullet);
+  //   console.log(bullet);
+  //   console.log("shot bullet!");
+  // });
 
 }
 

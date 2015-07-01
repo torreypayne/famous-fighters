@@ -8,7 +8,7 @@ var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
 
 function ShipView(game, body) {
-  this.node = game.node.addChild();
+  this.node = game.addChild();
   this.node
       .setOrigin(0.5, 0.5, 0.5)
       .setAlign(
@@ -20,19 +20,6 @@ function ShipView(game, body) {
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(50, 50, 50);
 }
-
-// function ShipSphere2(world) {
-//   var options = {
-//     mass: .5,
-//     radius: 1
-//   };
-//   Sphere.call(this, options);
-//   this
-//       .setPosition(0.5, 0.5, 0.5)
-//       .setForce(.1, .1, .1)
-//       .setMomentum(.45, .45, .45)
-//       .setVelocity(15,15,20);
-// }
 
 function ShipSphere(world) {
   var options = {
@@ -70,20 +57,40 @@ function ShipMesh(node) {
 function Ship(game, world) {
   this.world = world;
   this.physBody = new ShipSphere(world);
-  // this.physBody2 = new ShipSphere2(world);
-  this.world.add(this.physBody);
+  this.body = this.physBody.sphere;
+  this.world.add(this.body);
   this.view = new ShipView(game, this.physBody);
   this.node = this.view.node;
-  this.body = this.physBody.sphere;
   this.mesh = new ShipMesh(this.node);
 }
 
-Ship.prototype.update = function() {
+Ship.prototype.isCollidedWith = function(asteroids) {
+  var tooClose = false;
+  asteroids.forEach(function(asteroid) {
+    var diffs = [
+      this.physBody.x() - asteroid.physBody.x(),
+      this.physBody.y() - asteroid.physBody.y(),
+      this.physBody.z() - asteroid.physBody.z()
+    ];
+    var dist = Math.pow(diffs[0],2) + Math.pow(diffs[1],2) + Math.pow(diffs[2], 2);
+    var comparison = (dist <= this.body.radius + asteroid.physBody.radius());
+    if (this !== asteroid && comparison === true) {
+      tooClose = true;
+    }
+  }.bind(this));
+
+  return tooClose;
+}
+
+Ship.prototype.update = function(asteroids, time) {
   this.node.setPosition(
     this.physBody.x(),
     this.physBody.y(),
     this.physBody.z()
   );
+  if (this.isCollidedWith(asteroids)) {
+    console.log("GAME OVER!");
+  }
 }
 
 module.exports = Ship;

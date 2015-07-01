@@ -6,79 +6,104 @@ var physics = require('famous/physics');
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
-var Box = physics.Box;
 
-function Bullet(game, ship, world, asteroids) {
-  this.physBody = new BulletBox(ship, world);
-  this.body = this.physBody.box;
-  world.add(this.body);
-  this.view = new BulletView(game, this.physBody);
-  this.node = this.view.node;
-  this.mesh = new BulletMesh(this.node);
-}
-
-Bullet.prototype.update = function() {
-  this.node.setPosition(
-    this.physBody.x(),
-    this.physBody.y(),
-    this.physBody.z()
-  );
-}
-
-function BulletBox(ship, world) {
-  this.world = world;
-  var options = {
-    mass: .05,
-    size: [5, .25, .25],
-  };
-  this.box = new Box(options);
-  var sign = Math.round(2*Math.random()-1);
-  this.box
-      .setPosition(
-        ship.physBody.x()+.1,
-        ship.physBody.y()+.1,
-        ship.physBody.z()+1
-      );
-  this.box.setVelocity(
-    1 * ship.body.velocity.x,
-    1 * ship.body.velocity.y,
-    1 * ship.body.velocity.z
-  );
-}
-
-BulletBox.prototype.x = function() {
-  return this.box.getPosition().x;
-}
-
-BulletBox.prototype.y = function() {
-  return this.box.getPosition().y;
-}
-
-BulletBox.prototype.z = function() {
-  return this.box.getPosition().z;
-}
-
-function BulletView(game, physBody) {
-  this.physBody = physBody;
-  this.game = game;
-  this.node = game.node.addChild();
-  var x = physBody.x();
-  var y = physBody.y();
-  var z = physBody.z();
+function BulletView(game, body) {
+  this.node = game.addChild();
   this.node
       .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(x*.1,y*.1,z*.1)
-      .setPosition(x, y, z)
+      .setAlign(
+        body.x()*.1,
+        body.y()*.1,
+        body.z()*.1
+      )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(150, 10, 10);
+      .setAbsoluteSize(50, 50, 50);
+}
+
+function BulletSphere(ship, world) {
+  var options = {
+    mass: .5,
+    radius: 1
+  };
+  this.sphere = new Sphere(options);
+  // debugger;
+  this.sphere
+      .setPosition(
+        ship.body.position.x*.005,
+        ship.body.position.y*.005,
+        ship.body.position.z*.005
+      )
+      .setForce(.1, .1, .1)
+      .setMomentum(.45, .45, .45)
+      .setVelocity(
+        50*ship.body.getVelocity().x,
+        50*ship.body.getVelocity().y,
+        50*ship.body.getVelocity().z
+        );
+}
+
+BulletSphere.prototype.x = function() {
+  return this.sphere.getPosition().x;
+}
+
+BulletSphere.prototype.y = function() {
+  return this.sphere.getPosition().y;
+}
+
+BulletSphere.prototype.z = function() {
+  return this.sphere.getPosition().z;
 }
 
 function BulletMesh(node) {
   this.skin = new Mesh(node);
   this.skin
+      .setGeometry('Sphere', { detail: 50 })
       .setBaseColor(new Color('yellow'))
-      .setGeometry('Box');
+      ;
+}
+
+function Bullet(game, ship, world, asteroids) {
+  // debugger;
+  this.world = world;
+  this.ship = ship;
+  this.physBody = new BulletSphere(ship, world);
+  this.body = this.physBody.sphere;
+  this.world.add(this.body);
+  this.view = new BulletView(game, this.physBody);
+  this.node = this.view.node;
+  this.mesh = new BulletMesh(this.node);
+  this.asteroids = asteroids;
+}
+
+Bullet.prototype.isCollidedWith = function(asteroids) {
+  var tooClose = false;
+  this.asteroids.forEach(function(asteroid) {
+    var diffs = [
+      this.physBody.x() - asteroid.physBody.x(),
+      this.physBody.y() - asteroid.physBody.y(),
+      this.physBody.z() - asteroid.physBody.z()
+    ];
+    var dist = Math.pow(diffs[0],2) + Math.pow(diffs[1],2) + Math.pow(diffs[2], 2);
+    var comparison = (dist <= this.body.radius + asteroid.physBody.radius());
+    if (this !== asteroid && comparison === true) {
+      tooClose = true;
+    }
+  }.bind(this));
+
+  return tooClose;
+}
+
+Bullet.prototype.update = function(asteroids, time) {
+  // debugger;
+  this.node.setPosition(
+    this.physBody.x(),
+    this.physBody.y(),
+    this.physBody.z()
+  );
+  if (this.isCollidedWith(asteroids)) {
+    console.log("Hit asteroid!");
+  }
 }
 
 module.exports = Bullet;

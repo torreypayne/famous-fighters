@@ -11,8 +11,7 @@ var AsteroidSphere = require('./AsteroidSphere');
 function Asteroid(game, ship, world, asteroids) {
   this.physBody = new AsteroidSphere(ship, world);
   while (this.isCollidedWith(asteroids)) {
-    this.physBody.remove();
-    this.physBody = new AsteroidSphere(ship, world);
+    this.physBody.changePosition();
   }
   this.body = this.physBody.sphere;
   world.add(this.body);
@@ -74,7 +73,7 @@ function AsteroidMesh(node) {
 function AsteroidView(game, physBody) {
   this.physBody = physBody;
   this.game = game;
-  this.node = game.node.addChild();
+  this.node = game.addChild();
   this.node
       .setAlign(
         physBody.x()*.1,
@@ -87,7 +86,6 @@ function AsteroidView(game, physBody) {
 }
 
 AsteroidView.prototype.remove = function() {
-  // debugger;
   this.game.node.removeChild(this.node);
 }
 
