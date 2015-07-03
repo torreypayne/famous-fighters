@@ -18,12 +18,11 @@ function AsteroidSphere(ship, world) {
   var sign = Math.round(2*Math.random()-1);
   this.sphere
       .setPosition(
-        ship.physBody.x()+5 + sign*10*Math.random(),
-        ship.physBody.y()+5 + sign*10*Math.random(),
-        2*Math.random()
+        ship.physBody.x()+15 + sign*150*Math.random(),
+        ship.physBody.y()+15 + sign*150*Math.random(),
+        ship.physBody.y()+15 + sign*150*Math.random()
       )
-      .setVelocity(sign*150, sign*150, sign*150*Math.random() - 1);
-
+      .setVelocity(100 + sign*200, 100 + sign*200, 100 + sign*200*Math.random() - 1);
 }
 
 AsteroidSphere.prototype.remove = function() {

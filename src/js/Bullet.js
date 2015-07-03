@@ -7,18 +7,18 @@ var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
 
-function BulletView(game, body) {
+function BulletView(game, ship, physBody) {
+  this.physBody = physBody;
   this.node = game.addChild();
   this.node
-      .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(
-        body.x()*.1,
-        body.y()*.1,
-        body.z()*.1
-      )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(50, 50, 50);
+  this.node.setAlign(
+    ship.node.getAlign()[0],
+    ship.node.getAlign()[1],
+    ship.node.getAlign()[2]
+  );
 }
 
 function BulletSphere(ship, world) {
@@ -27,20 +27,20 @@ function BulletSphere(ship, world) {
     radius: 1
   };
   this.sphere = new Sphere(options);
-  // debugger;
   this.sphere
       .setPosition(
-        ship.body.position.x*.005,
-        ship.body.position.y*.005,
-        ship.body.position.z*.005
+        ship.body.position.x,
+        ship.body.position.y,
+        ship.body.position.z
       )
       .setForce(.1, .1, .1)
       .setMomentum(.45, .45, .45)
       .setVelocity(
-        50*ship.body.getVelocity().x,
-        50*ship.body.getVelocity().y,
-        50*ship.body.getVelocity().z
+        1*ship.body.getVelocity().x,
+        1*ship.body.getVelocity().y,
+        1*ship.body.getVelocity().z
         );
+        // debugger;
 }
 
 BulletSphere.prototype.x = function() {
@@ -64,16 +64,16 @@ function BulletMesh(node) {
 }
 
 function Bullet(game, ship, world, asteroids) {
-  // debugger;
   this.world = world;
   this.ship = ship;
   this.physBody = new BulletSphere(ship, world);
   this.body = this.physBody.sphere;
   this.world.add(this.body);
-  this.view = new BulletView(game, this.physBody);
+  this.view = new BulletView(game, ship, this.physBody);
   this.node = this.view.node;
   this.mesh = new BulletMesh(this.node);
   this.asteroids = asteroids;
+  this.update();
 }
 
 Bullet.prototype.isCollidedWith = function(asteroids) {
@@ -95,7 +95,6 @@ Bullet.prototype.isCollidedWith = function(asteroids) {
 }
 
 Bullet.prototype.update = function(asteroids, time) {
-  // debugger;
   this.node.setPosition(
     this.physBody.x(),
     this.physBody.y(),

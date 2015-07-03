@@ -6,7 +6,9 @@ var physics = require('famous/physics');
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
+var DOMElement = require('famous/dom-renderables/DOMElement');
 var AsteroidSphere = require('./AsteroidSphere');
+var Bullet = require('./Bullet');
 
 function Asteroid(game, ship, world, asteroids) {
   this.physBody = new AsteroidSphere(ship, world);
@@ -16,14 +18,19 @@ function Asteroid(game, ship, world, asteroids) {
   this.body = this.physBody.sphere;
   world.add(this.body);
 
-  this.view = new AsteroidView(game, this.physBody);
-  this.node = this.view.node;
+  this.node = new AsteroidView(game, this.physBody);
   this.mesh = new AsteroidMesh(this.node);
+  this.asteroids = asteroids;
+  this.game = game;
 }
+
+AsteroidView.prototype = Object.create(Node.prototype);
+AsteroidView.prototype.constructor = AsteroidView;
+
 
 Asteroid.prototype.remove = function() {
   this.physBody.remove();
-  this.view.remove();
+  this.node.remove();
 }
 
 Asteroid.prototype.update = function() {
@@ -32,6 +39,10 @@ Asteroid.prototype.update = function() {
     this.physBody.y(),
     this.physBody.z()
   );
+
+  if (this.isCollidedWith(this.asteroids)) {
+    this.remove();
+  }
 }
 
 Asteroid.prototype.x = function() {
@@ -64,6 +75,20 @@ Asteroid.prototype.isCollidedWith = function(asteroids) {
   return tooClose;
 }
 
+AsteroidView.prototype.onReceive = function onReceive(type, ev) {
+  // debugger;
+  // if (type === "click") {
+  //   debugger;
+  //   console.log('clicked on Asteroid!');
+  //   var bullet = new Bullet(this.game, this.ship, this.world, this.asteroids);
+  //   this.game.bullets.push(bullet);
+  //   console.log('Fire!');
+  //   this.emit('bulletfire', ev.value);
+  // } else {
+  //   console.log(type);
+  // }
+}
+
 function AsteroidMesh(node) {
   this.skin = new Mesh(node);
   this.skin
@@ -71,10 +96,11 @@ function AsteroidMesh(node) {
 }
 
 function AsteroidView(game, physBody) {
+  Node.call(this);
+  game.addChild(this);
   this.physBody = physBody;
   this.game = game;
-  this.node = game.addChild();
-  this.node
+  this
       .setAlign(
         physBody.x()*.1,
         physBody.y()*.1,
@@ -86,7 +112,7 @@ function AsteroidView(game, physBody) {
 }
 
 AsteroidView.prototype.remove = function() {
-  this.game.node.removeChild(this.node);
+  this.game.removeChild(this.node);
 }
 
 module.exports = Asteroid;

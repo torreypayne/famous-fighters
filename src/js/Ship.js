@@ -7,53 +7,6 @@ var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
 
-function ShipView(game, body) {
-  this.node = game.addChild();
-  this.node
-      .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(
-        body.x()*.1,
-        body.y()*.1,
-        body.z()*.1
-      )
-      .setMountPoint(0.5, 0.5, 0.5)
-      .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(50, 50, 50);
-}
-
-function ShipSphere(world) {
-  var options = {
-    mass: .5,
-    radius: 1
-  };
-  this.sphere = new Sphere(options);
-  this.sphere
-      .setPosition(0.5, 0.5, 0.5)
-      .setForce(.1, .1, .1)
-      .setMomentum(.45, .45, .45)
-      .setVelocity(15,15,20);
-}
-
-ShipSphere.prototype.x = function() {
-  return this.sphere.getPosition().x;
-}
-
-ShipSphere.prototype.y = function() {
-  return this.sphere.getPosition().y;
-}
-
-ShipSphere.prototype.z = function() {
-  return this.sphere.getPosition().z;
-}
-
-function ShipMesh(node) {
-  this.skin = new Mesh(node);
-  this.skin
-      .setGeometry('Sphere', { detail: 50 })
-      .setBaseColor(new Color('red'))
-      ;
-}
-
 function Ship(game, world) {
   this.world = world;
   this.physBody = new ShipSphere(world);
@@ -82,6 +35,14 @@ Ship.prototype.isCollidedWith = function(asteroids) {
   return tooClose;
 }
 
+Ship.prototype.power = function(impulse) {
+
+}
+
+Ship.prototype.position = function() {
+  return this.body.getPosition();
+}
+
 Ship.prototype.update = function(asteroids, time) {
   this.node.setPosition(
     this.physBody.x(),
@@ -91,6 +52,53 @@ Ship.prototype.update = function(asteroids, time) {
   if (this.isCollidedWith(asteroids)) {
     console.log("GAME OVER!");
   }
+}
+
+function ShipView(game, body) {
+  this.node = game.addChild();
+  this.node
+      .setOrigin(0.5, 0.5, 0.5)
+      .setAlign(
+        body.x()*.1,
+        body.y()*.1,
+        body.z()*.1
+      )
+      .setMountPoint(0.5, 0.5, 0.5)
+      .setSizeMode(1, 1, 1)
+      .setAbsoluteSize(175, 175, 175);
+}
+
+function ShipSphere(world) {
+  var options = {
+    mass: .5,
+    radius: 1
+  };
+  this.sphere = new Sphere(options);
+  this.sphere
+      .setPosition(0.5, 0.5, 0.5)
+      .setForce(.1, .1, .1)
+      .setMomentum(.45, .45, .45)
+      .setVelocity(150,150,20);
+}
+
+ShipSphere.prototype.x = function() {
+  return this.sphere.getPosition().x;
+}
+
+ShipSphere.prototype.y = function() {
+  return this.sphere.getPosition().y;
+}
+
+ShipSphere.prototype.z = function() {
+  return this.sphere.getPosition().z;
+}
+
+function ShipMesh(node) {
+  this.skin = new Mesh(node);
+  this.skin
+      .setGeometry('Sphere', { detail: 50 })
+      .setBaseColor(new Color('red'))
+      ;
 }
 
 module.exports = Ship;
