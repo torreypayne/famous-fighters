@@ -60,7 +60,7 @@ function WallView(wall, game, body) {
 
 function WallMesh(node) {
   this.skin = new Mesh(node);
-  this.skin.setGeometry('Box').setBaseColor(new Color('green'));
+  this.skin.setGeometry('Plane').setBaseColor(new Color('green'));
 }
 
 module.exports = GameWall;

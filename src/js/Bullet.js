@@ -8,23 +8,28 @@ var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
 
 function BulletView(game, ship, physBody) {
+  Node.call(this);
+  game.addChild(this);
   this.physBody = physBody;
-  this.node = game.addChild();
-  this.node
+  this
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(50, 50, 50);
-  this.node.setAlign(
-    ship.node.getAlign()[0],
-    ship.node.getAlign()[1],
-    ship.node.getAlign()[2]
-  );
+      .setAbsoluteSize(50, 50, 50)
+      .setAlign(
+        ship.node.getAlign()[0],
+        ship.node.getAlign()[1],
+        ship.node.getAlign()[2]
+      );
 }
+
+BulletView.prototype = Object.create(Node.prototype);
+BulletView.prototype.constructor = BulletView;
+
 
 function BulletSphere(ship, world) {
   var options = {
     mass: .5,
-    radius: 1
+    radius: .33
   };
   this.sphere = new Sphere(options);
   this.sphere
@@ -36,9 +41,9 @@ function BulletSphere(ship, world) {
       .setForce(.1, .1, .1)
       .setMomentum(.45, .45, .45)
       .setVelocity(
-        1*ship.body.getVelocity().x,
-        1*ship.body.getVelocity().y,
-        1*ship.body.getVelocity().z
+        10*ship.body.getVelocity().x,
+        10*ship.body.getVelocity().y,
+        10*ship.body.getVelocity().z
         );
         // debugger;
 }
@@ -69,8 +74,7 @@ function Bullet(game, ship, world, asteroids) {
   this.physBody = new BulletSphere(ship, world);
   this.body = this.physBody.sphere;
   this.world.add(this.body);
-  this.view = new BulletView(game, ship, this.physBody);
-  this.node = this.view.node;
+  this.node = new BulletView(game, ship, this.physBody);
   this.mesh = new BulletMesh(this.node);
   this.asteroids = asteroids;
   this.update();

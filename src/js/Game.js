@@ -21,25 +21,14 @@ function Game(scene, world, camera) {
   scene.addChild(this);
   this.setOrigin(0.5, 0.5, 0.5)
       .setSizeMode('absolute', 'absolute', 'absolute')
-      .setAbsoluteSize(250, 250)
+      .setAbsoluteSize(250, 250);
   ;
-
-  // this.el = new DOMElement(this)
-  //     .setProperty("backgroundColor", 'black')
-      // .setAbsoluteSize(1000,1000);
-      // .setAttribute('src', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/A_starry_sky_above_Death_Valley_and_Orionid.jpg/1280px-A_starry_sky_above_Death_Valley_and_Orionid.jpg');
-  // this.el2 = new DOMElement(this);
-
-  // this.el
-      // .setProperty("backgroundImage", 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/A_starry_sky_above_Death_Valley_and_Orionid.jpg/1280px-A_starry_sky_above_Death_Valley_and_Orionid.jpg')
-      // .setProperty("backgroundSize", "200x 200px");
   this.NUM_ASTEROIDS = 200;
-  this._domElement = new DOMElement(this);
   this.world = world;
   this.asteroids = [];
   this.asteroidBodies = [];
   this.bullets = [];
-  this.ship = new Ship(this, world);
+  this.ship = new Ship(scene, this, world);
   this.walls = [];
   world.add(this.ship.body);
   this.setProportionalSize(1, 1, 1);
@@ -54,6 +43,11 @@ function Game(scene, world, camera) {
   this.addUIEvent('click');
   this.addUIEvent('keydown');
   this.addUIEvent('keyup');
+  this.setRotation(1,0,0);
+
+  document.addEventListener('keydown', function(event) {
+    this.onReceive(event.type, event);
+  }.bind(this));
 }
 Game.prototype = Object.create(Node.prototype);
 Game.prototype.constructor = Game;
@@ -81,23 +75,9 @@ Game.prototype.start = function() {
 
   this.clock.setInterval(function() {
     var time = this.clock.getTime();
-    // debugger;
     var pos = this.ship.position();
-    this.setPosition(pos.x, pos.y, pos.z);
-    this.setRotation(
-      0,
-      time / 1500,
-      0
-    );
+    this.setPosition(pos.x - 100, pos.y - 100, pos.z - 100);
   }.bind(this), 5);
-
-  // this.clock.setInterval(function() {
-  //   for (var i = 0; i < this.NUM_ASTEROIDS/10; i++) {
-  //     var asteroid = new Asteroid(this, this.ship, this.world, this.asteroids);
-  //     this.addAsteroid(asteroid);
-  //     this.asteroidBodies.push(asteroid.body);
-  //   }
-  // }.bind(this), 2000);
 }
 
 
@@ -110,15 +90,15 @@ Game.prototype.addAsteroid = function(asteroid) {
 }
 
 Game.prototype.onReceive = function onReceive(type, ev) {
-  if (type === "click") {
-    var bullet = new Bullet(this, this.ship, this.world, this.asteroids);
-    this.bullets.push(bullet);
-    console.log('Fire!');
-    this.emit('bulletfire', ev.value);
-  } else {
-    debugger;
-    console.log(type);
-  }
+  // if (type === "click") {
+  //   var bullet = new Bullet(this, this.ship, this.world, this.asteroids);
+  //   this.bullets.push(bullet);
+  //   console.log('Fire!');
+  //   this.emit('bulletfire', ev.value);
+  // } else {
+  //   console.log(type);
+  // }
+  this.ship.onReceive(type, ev);
   this.getChildren().forEach(function(child) {
     child.onReceive && child.onReceive(type, ev);
   });
@@ -140,5 +120,6 @@ Game.prototype.setupWalls = function() {
     this.backWall
   );
 }
+
 
 module.exports = Game;

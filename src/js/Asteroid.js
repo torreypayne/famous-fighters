@@ -24,8 +24,6 @@ function Asteroid(game, ship, world, asteroids) {
   this.game = game;
 }
 
-AsteroidView.prototype = Object.create(Node.prototype);
-AsteroidView.prototype.constructor = AsteroidView;
 
 
 Asteroid.prototype.remove = function() {
@@ -75,25 +73,6 @@ Asteroid.prototype.isCollidedWith = function(asteroids) {
   return tooClose;
 }
 
-AsteroidView.prototype.onReceive = function onReceive(type, ev) {
-  // debugger;
-  // if (type === "click") {
-  //   debugger;
-  //   console.log('clicked on Asteroid!');
-  //   var bullet = new Bullet(this.game, this.ship, this.world, this.asteroids);
-  //   this.game.bullets.push(bullet);
-  //   console.log('Fire!');
-  //   this.emit('bulletfire', ev.value);
-  // } else {
-  //   console.log(type);
-  // }
-}
-
-function AsteroidMesh(node) {
-  this.skin = new Mesh(node);
-  this.skin
-      .setGeometry('Sphere');
-}
 
 function AsteroidView(game, physBody) {
   Node.call(this);
@@ -111,8 +90,31 @@ function AsteroidView(game, physBody) {
       .setAbsoluteSize(75, 75, 75);
 }
 
+AsteroidView.prototype = Object.create(Node.prototype);
+AsteroidView.prototype.constructor = AsteroidView;
+
+AsteroidView.prototype.onReceive = function onReceive(type, ev) {
+  // debugger;
+  // if (type === "click") {
+  //   debugger;
+  //   console.log('clicked on Asteroid!');
+  //   var bullet = new Bullet(this.game, this.ship, this.world, this.asteroids);
+  //   this.game.bullets.push(bullet);
+  //   console.log('Fire!');
+  //   this.emit('bulletfire', ev.value);
+  // } else {
+  //   console.log(type);
+  // }
+}
+
 AsteroidView.prototype.remove = function() {
-  this.game.removeChild(this.node);
+  this.game.removeChild(this);
+}
+
+function AsteroidMesh(node) {
+  this.skin = new Mesh(node);
+  this.skin
+      .setGeometry('Sphere');
 }
 
 module.exports = Asteroid;

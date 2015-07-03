@@ -6,15 +6,17 @@ var physics = require('famous/physics');
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
+var Bullet = require('./Bullet');
 
-function Ship(game, world) {
+function Ship(scene, game, world) {
+  this.game = game;
   this.world = world;
   this.physBody = new ShipSphere(world);
   this.body = this.physBody.sphere;
   this.world.add(this.body);
-  this.view = new ShipView(game, this.physBody);
-  this.node = this.view.node;
+  this.node = new ShipView(game, this.physBody);
   this.mesh = new ShipMesh(this.node);
+  this.bullets = [];
 }
 
 Ship.prototype.isCollidedWith = function(asteroids) {
@@ -54,9 +56,33 @@ Ship.prototype.update = function(asteroids, time) {
   }
 }
 
+Ship.prototype.onReceive = function onReceive(type, ev) {
+  if (event.keyCode === 32) {
+    var bullet = new Bullet(this.game, this, this.world, this.game.asteroids);
+    this.game.bullets.push(bullet);
+    console.log('Fire!');
+    // this.emit('bulletfire', ev.value);
+  } else {
+    console.log(type);
+  }
+}
+
+// ShipView.prototype.onReceive = function onReceive(type, ev) {
+//   if (type === "click") {
+//     console.log('clicked on Asteroid!');
+//     var bullet = new Bullet(this.game, this, this.world, this.asteroids);
+//     this.game.bullets.push(bullet);
+//     console.log('Fire!');
+//     this.emit('bulletfire', ev.value);
+//   } else {
+//     console.log(type);
+//   }
+// }
+
 function ShipView(game, body) {
-  this.node = game.addChild();
-  this.node
+  Node.call(this);
+  game.addChild(this);
+  this
       .setOrigin(0.5, 0.5, 0.5)
       .setAlign(
         body.x()*.1,
@@ -66,7 +92,11 @@ function ShipView(game, body) {
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(175, 175, 175);
+  this.addUIEvent('click');
 }
+
+ShipView.prototype = Object.create(Node.prototype);
+ShipView.prototype.constructor = ShipView;
 
 function ShipSphere(world) {
   var options = {
@@ -96,7 +126,7 @@ ShipSphere.prototype.z = function() {
 function ShipMesh(node) {
   this.skin = new Mesh(node);
   this.skin
-      .setGeometry('Sphere', { detail: 50 })
+      .setGeometry('Icosahedron', { detail: 10 })
       .setBaseColor(new Color('red'))
       ;
 }
