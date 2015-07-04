@@ -45,6 +45,12 @@ function Game(scene, world, camera) {
   this.addUIEvent('keyup');
   this.setRotation(1,0,0);
 
+  this.el1 = new DOMElement(this, { tagName: 'img' })
+  .setAttribute("src", "http://www.panhuys.com/wp-content/uploads/2012/09/black-night-starry-sky.gif")
+  .setAttribute("width", "1000")
+  .setAttribute("height", "10000")
+  ;
+
   document.addEventListener('keydown', function(event) {
     this.onReceive(event.type, event);
   }.bind(this));
@@ -63,20 +69,21 @@ Game.prototype.start = function() {
     });
 
     this.bullets.forEach(function(bullet, idx) {
-      console.log(idx);
+      // console.log(idx);
       bullet.update();
     });
-    console.log(this.bullets.length);
+    // console.log(this.bullets.length);
 
     this.walls.forEach(function(wall) {
       wall.update();
     });
+    // this.setRotation(0,time/2000,0);
   }.bind(this), 5);
 
   this.clock.setInterval(function() {
     var time = this.clock.getTime();
     var pos = this.ship.position();
-    this.setPosition(pos.x - 100, pos.y - 100, pos.z - 100);
+    this.setPosition(pos.x, pos.y, pos.z);
   }.bind(this), 5);
 }
 

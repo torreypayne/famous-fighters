@@ -38,7 +38,30 @@ Ship.prototype.isCollidedWith = function(asteroids) {
 }
 
 Ship.prototype.power = function(impulse) {
+  // this.body.setVelocity(
+  //   this.body.getVelocity().x + 10*impulse[0],
+  //   this.body.getVelocity().y + 10*impulse[1],
+  //   this.body.getVelocity().z + 10*impulse[2]
+  // );
+  this.body.setVelocity(
+    150*impulse[0],
+    150*impulse[1],
+    150*impulse[2]
+  );
+}
 
+Ship.prototype.spin = function(impulse) {
+  this.game.setRotation(
+    this.game.getRotation()[0] + 2* Math.PI * impulse[0]/180,
+    this.game.getRotation()[1] + 2* Math.PI * impulse[1]/180,
+    this.game.getRotation()[2] + 2* Math.PI * impulse[2]/180,
+    this.game.getRotation()[3] + 2* Math.PI * impulse[3]/180
+  );
+  // this.body.setAngularVelocity(
+  //   this.body.getAngularVelocity().x + impulse[0],
+  //   this.body.getAngularVelocity().y + impulse[1],
+  //   this.body.getAngularVelocity().z + impulse[2]
+  // )
 }
 
 Ship.prototype.position = function() {
@@ -61,23 +84,35 @@ Ship.prototype.onReceive = function onReceive(type, ev) {
     var bullet = new Bullet(this.game, this, this.world, this.game.asteroids);
     this.game.bullets.push(bullet);
     console.log('Fire!');
-    // this.emit('bulletfire', ev.value);
+  } else if (event.keyCode === 37) {
+    console.log("37");
+    this.power([1,0,0]);
+
+  } else if (event.keyCode === 38) {
+    console.log("38");
+    this.power([0,-1,0]);
+
+  } else if (event.keyCode === 39) {
+    console.log("39");
+    this.power([-1,0,0]);
+
+  } else if (event.keyCode === 40) {
+    console.log("40");
+    this.power([0,1,0]);
+  } else if (event.keyCode === 65) {
+    console.log("65");
+    this.spin([1,0,0,0]);
+  } else if (event.keyCode === 68) {
+    console.log("68");
+    this.spin([-1,0,0,0]);
+  } else if (event.keyCode === 87) {
+    this.spin([0,1,0,0]);
+  } else if (event.keyCode === 83) {
+    this.spin([0,-1,0,0]);
   } else {
-    console.log(type);
+    console.log(ev.keyCode);
   }
 }
-
-// ShipView.prototype.onReceive = function onReceive(type, ev) {
-//   if (type === "click") {
-//     console.log('clicked on Asteroid!');
-//     var bullet = new Bullet(this.game, this, this.world, this.asteroids);
-//     this.game.bullets.push(bullet);
-//     console.log('Fire!');
-//     this.emit('bulletfire', ev.value);
-//   } else {
-//     console.log(type);
-//   }
-// }
 
 function ShipView(game, body) {
   Node.call(this);

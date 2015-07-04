@@ -35,6 +35,7 @@ function GameApp(scene, num) {
   world.add(gravity);
   var lightNode = scene.addChild().setAlign(0.5, 0.5, 0.5).setPosition(0, 0, 250);
   var light = new PointLight(lightNode).setColor(new Color('white'));
+
 }
 
 module.exports = GameApp;
