@@ -14,7 +14,6 @@ var Asteroid = require('./Asteroid');
 var UIEvent = require('famous/dom-renderers/events/UIEvent');
 var KeyboardEvent = require('famous/dom-renderers/events/KeyboardEvent');
 var GameWall = require('./GameWall');
-// var Surface = require('famous/core/Surface');
 
 function Game(scene, world, camera) {
   Node.call(this);
@@ -22,8 +21,7 @@ function Game(scene, world, camera) {
   this.setOrigin(0.5, 0.5, 0.5)
       .setSizeMode('absolute', 'absolute', 'absolute')
       .setAbsoluteSize(250, 250);
-  ;
-  this.NUM_ASTEROIDS = 200;
+  this.NUM_ASTEROIDS = 100;
   this.world = world;
   this.asteroids = [];
   this.asteroidBodies = [];
@@ -36,7 +34,6 @@ function Game(scene, world, camera) {
   for (var i = 0; i < this.NUM_ASTEROIDS; i++) {
     var asteroid = new Asteroid(this, this.ship, world, this.asteroids);
     this.addAsteroid(asteroid);
-    this.asteroidBodies.push(asteroid.body);
   }
 
   this.setupWalls();
@@ -44,12 +41,6 @@ function Game(scene, world, camera) {
   this.addUIEvent('keydown');
   this.addUIEvent('keyup');
   this.setRotation(1,0,0);
-
-  this.el1 = new DOMElement(this, { tagName: 'img' })
-  .setAttribute("src", "http://www.panhuys.com/wp-content/uploads/2012/09/black-night-starry-sky.gif")
-  .setAttribute("width", "1000")
-  .setAttribute("height", "10000")
-  ;
 
   document.addEventListener('keydown', function(event) {
     this.onReceive(event.type, event);
@@ -69,22 +60,19 @@ Game.prototype.start = function() {
     });
 
     this.bullets.forEach(function(bullet, idx) {
-      // console.log(idx);
       bullet.update();
     });
-    // console.log(this.bullets.length);
 
     this.walls.forEach(function(wall) {
       wall.update();
     });
-    // this.setRotation(0,time/2000,0);
-  }.bind(this), 5);
+  }.bind(this), 16);
 
   this.clock.setInterval(function() {
     var time = this.clock.getTime();
     var pos = this.ship.position();
     this.setPosition(pos.x, pos.y, pos.z);
-  }.bind(this), 5);
+  }.bind(this), 16);
 }
 
 
@@ -94,17 +82,10 @@ Game.prototype.addShip = function(ship) {
 
 Game.prototype.addAsteroid = function(asteroid) {
   this.asteroids.push(asteroid);
+  this.asteroidBodies.push(asteroid.body);
 }
 
 Game.prototype.onReceive = function onReceive(type, ev) {
-  // if (type === "click") {
-  //   var bullet = new Bullet(this, this.ship, this.world, this.asteroids);
-  //   this.bullets.push(bullet);
-  //   console.log('Fire!');
-  //   this.emit('bulletfire', ev.value);
-  // } else {
-  //   console.log(type);
-  // }
   this.ship.onReceive(type, ev);
   this.getChildren().forEach(function(child) {
     child.onReceive && child.onReceive(type, ev);

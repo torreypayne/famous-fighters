@@ -16,9 +16,9 @@ function BulletView(game, ship, physBody) {
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(50, 50, 50)
       .setAlign(
-        ship.node.getAlign()[0],
-        ship.node.getAlign()[1],
-        ship.node.getAlign()[2]
+        ship.node.getAlign()[0]*.5,
+        ship.node.getAlign()[1]*.5,
+        ship.node.getAlign()[2]*.5
       );
 }
 
@@ -41,9 +41,9 @@ function BulletSphere(ship, world) {
       .setForce(.1, .1, .1)
       .setMomentum(.45, .45, .45)
       .setVelocity(
-        10*ship.body.getVelocity().x,
-        10*ship.body.getVelocity().y,
-        10*ship.body.getVelocity().z
+        20*ship.body.getVelocity().x,
+        20*ship.body.getVelocity().y,
+        20*ship.body.getVelocity().z
         );
         // debugger;
 }
@@ -80,7 +80,7 @@ function Bullet(game, ship, world, asteroids) {
   this.update();
 }
 
-Bullet.prototype.isCollidedWith = function(asteroids) {
+Bullet.prototype.isColliding = function(asteroids) {
   var tooClose = false;
   this.asteroids.forEach(function(asteroid) {
     var diffs = [
@@ -104,7 +104,7 @@ Bullet.prototype.update = function(asteroids, time) {
     this.physBody.y(),
     this.physBody.z()
   );
-  if (this.isCollidedWith(asteroids)) {
+  if (this.isColliding(asteroids)) {
     console.log("Hit asteroid!");
   }
 }

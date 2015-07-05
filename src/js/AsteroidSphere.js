@@ -10,19 +10,19 @@ var Sphere = physics.Sphere;
 function AsteroidSphere(ship, world) {
   this.world = world;
   var options = {
-    mass: 30,
-    radius: 1,
+    mass: 10,
+    radius: 10,
   };
   this.ship = ship;
   this.sphere = new Sphere(options);
   var sign = Math.round(2*Math.random()-1);
   this.sphere
       .setPosition(
-        ship.physBody.x()+15 + sign*150*Math.random(),
-        ship.physBody.y()+15 + sign*150*Math.random(),
-        ship.physBody.y()+15 + sign*150*Math.random()
+        ship.physBody.x()+100 + sign*150*Math.random(),
+        ship.physBody.y()+100 + sign*150*Math.random(),
+        ship.physBody.y()+100 + sign*150*Math.random()
       )
-      .setVelocity(100 + sign*200, 100 + sign*200, 100 + sign*200*Math.random() - 1);
+      .setVelocity(10 + sign*20, 10 + sign*20, 10 + sign*20*Math.random() - 1);
 }
 
 AsteroidSphere.prototype.remove = function() {
@@ -33,9 +33,9 @@ AsteroidSphere.prototype.changePosition = function() {
   var sign = Math.round(2*Math.random()-1);
   this.sphere
       .setPosition(
-        this.ship.physBody.x()+5 + sign*50*Math.random(),
-        this.ship.physBody.y()+5 + sign*50*Math.random(),
-        2*Math.random()
+        this.ship.physBody.x()+100 + sign*150*Math.random(),
+        this.ship.physBody.y()+100 + sign*150*Math.random(),
+        this.ship.physBody.z()+100 + sign*150*Math.random()
       );
 }
 

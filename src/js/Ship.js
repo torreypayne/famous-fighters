@@ -3,6 +3,9 @@ var Mesh = require('famous/webgl-renderables/Mesh');
 var math = require('famous/math');
 var Color = require('famous/utilities/Color');
 var physics = require('famous/physics');
+var Material = require('famous/webgl-materials/Material');
+var DOMElement = require('famous/dom-renderables/DOMElement');
+
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
@@ -19,7 +22,7 @@ function Ship(scene, game, world) {
   this.bullets = [];
 }
 
-Ship.prototype.isCollidedWith = function(asteroids) {
+Ship.prototype.isColliding = function(asteroids) {
   var tooClose = false;
   asteroids.forEach(function(asteroid) {
     var diffs = [
@@ -27,7 +30,7 @@ Ship.prototype.isCollidedWith = function(asteroids) {
       this.physBody.y() - asteroid.physBody.y(),
       this.physBody.z() - asteroid.physBody.z()
     ];
-    var dist = Math.pow(diffs[0],2) + Math.pow(diffs[1],2) + Math.pow(diffs[2], 2);
+    var dist = Math.pow(diffs[0], 2) + Math.pow(diffs[1], 2) + Math.pow(diffs[2], 2);
     var comparison = (dist <= this.body.radius + asteroid.physBody.radius());
     if (this !== asteroid && comparison === true) {
       tooClose = true;
@@ -74,7 +77,7 @@ Ship.prototype.update = function(asteroids, time) {
     this.physBody.y(),
     this.physBody.z()
   );
-  if (this.isCollidedWith(asteroids)) {
+  if (this.isColliding(asteroids)) {
     console.log("GAME OVER!");
   }
 }
@@ -120,14 +123,13 @@ function ShipView(game, body) {
   this
       .setOrigin(0.5, 0.5, 0.5)
       .setAlign(
-        body.x()*.1,
-        body.y()*.1,
-        body.z()*.1
+        body.x()*.05,
+        body.y()*.05,
+        body.z()*.05
       )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(175, 175, 175);
-  this.addUIEvent('click');
+      .setAbsoluteSize(100, 100, 100);
 }
 
 ShipView.prototype = Object.create(Node.prototype);
@@ -164,6 +166,9 @@ function ShipMesh(node) {
       .setGeometry('Icosahedron', { detail: 10 })
       .setBaseColor(new Color('red'))
       ;
+
+  var image = Material.Texture('./images/star-wars-vader-tie-fighter.obj');
+  // var mix = Material.mix([image, [1,1,0,1]])
 }
 
 module.exports = Ship;

@@ -12,7 +12,7 @@ var Bullet = require('./Bullet');
 
 function Asteroid(game, ship, world, asteroids) {
   this.physBody = new AsteroidSphere(ship, world);
-  while (this.isCollidedWith(asteroids)) {
+  while (this.isColliding(asteroids)) {
     this.physBody.changePosition();
   }
   this.body = this.physBody.sphere;
@@ -38,8 +38,8 @@ Asteroid.prototype.update = function() {
     this.physBody.z()
   );
 
-  if (this.isCollidedWith(this.asteroids)) {
-    this.remove();
+  if (this.isColliding(this.asteroids)) {
+    console.log("Collision!");
   }
 }
 
@@ -55,7 +55,7 @@ Asteroid.prototype.z = function() {
   return this.physBody.z();
 }
 
-Asteroid.prototype.isCollidedWith = function(asteroids) {
+Asteroid.prototype.isColliding = function(asteroids) {
   var tooClose = false;
   asteroids.forEach(function(asteroid) {
     var diffs = [
@@ -64,7 +64,7 @@ Asteroid.prototype.isCollidedWith = function(asteroids) {
       this.physBody.z() - asteroid.physBody.z()
     ];
     var dist = Math.pow(diffs[0],2) + Math.pow(diffs[1],2) + Math.pow(diffs[2], 2);
-    var comparison = (dist <= this.physBody.radius() + asteroid.physBody.radius());
+    var comparison = (dist <= this.physBody.radius()*3 + asteroid.physBody.radius()*3);
     if (this !== asteroid && comparison === true) {
       tooClose = true;
     }
@@ -81,31 +81,19 @@ function AsteroidView(game, physBody) {
   this.game = game;
   this
       .setAlign(
-        physBody.x()*.1,
-        physBody.y()*.1,
-        physBody.z()*.1
+        physBody.x()*.05,
+        physBody.y()*.05,
+        physBody.z()*.05
       )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(75, 75, 75);
+      .setAbsoluteSize(10, 10, 10);
 }
 
 AsteroidView.prototype = Object.create(Node.prototype);
 AsteroidView.prototype.constructor = AsteroidView;
 
-AsteroidView.prototype.onReceive = function onReceive(type, ev) {
-  // debugger;
-  // if (type === "click") {
-  //   debugger;
-  //   console.log('clicked on Asteroid!');
-  //   var bullet = new Bullet(this.game, this.ship, this.world, this.asteroids);
-  //   this.game.bullets.push(bullet);
-  //   console.log('Fire!');
-  //   this.emit('bulletfire', ev.value);
-  // } else {
-  //   console.log(type);
-  // }
-}
+AsteroidView.prototype.onReceive = function onReceive(type, ev) {}
 
 AsteroidView.prototype.remove = function() {
   this.game.removeChild(this);
