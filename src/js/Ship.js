@@ -83,37 +83,38 @@ Ship.prototype.update = function(asteroids, time) {
 }
 
 Ship.prototype.onReceive = function onReceive(type, ev) {
-  if (event.keyCode === 32) {
-    var bullet = new Bullet(this.game, this, this.world, this.game.asteroids);
-    this.game.bullets.push(bullet);
-    console.log('Fire!');
-  } else if (event.keyCode === 37) {
-    console.log("37");
-    this.power([1,0,0]);
-
-  } else if (event.keyCode === 38) {
-    console.log("38");
-    this.power([0,-1,0]);
-
-  } else if (event.keyCode === 39) {
-    console.log("39");
-    this.power([-1,0,0]);
-
-  } else if (event.keyCode === 40) {
-    console.log("40");
-    this.power([0,1,0]);
-  } else if (event.keyCode === 65) {
-    console.log("65");
-    this.spin([1,0,0,0]);
-  } else if (event.keyCode === 68) {
-    console.log("68");
-    this.spin([-1,0,0,0]);
-  } else if (event.keyCode === 87) {
-    this.spin([0,1,0,0]);
-  } else if (event.keyCode === 83) {
-    this.spin([0,-1,0,0]);
-  } else {
-    console.log(ev.keyCode);
+  switch (event.keyCode) {
+    case 32:
+      var bullet = new Bullet(this.game, this, this.world, this.game.asteroids);
+      this.game.bullets.push(bullet);
+      console.log('Fire!');
+      break;
+    case 37:
+      this.power([1,0,0]);
+      break;
+    case 38:
+      this.power([0,-1,0]);
+      break;
+    case 39:
+      this.power([-1,0,0]);
+      break;
+    case 40:
+      this.power([0,1,0]);
+      break;
+    case 65:
+      this.spin([1,0,0,0]);
+      break;
+    case 68:
+      this.spin([-1,0,0,0]);
+      break;
+    case 87:
+      this.spin([0,1,0,0]);
+      break;
+    case 83:
+      this.spin([0,-1,0,0]);
+      break;
+    default:
+      console.log(ev.keyCode);
   }
 }
 
@@ -123,9 +124,9 @@ function ShipView(game, body) {
   this
       .setOrigin(0.5, 0.5, 0.5)
       .setAlign(
-        body.x()*.05,
-        body.y()*.05,
-        body.z()*.05
+        body.x()*.5,
+        body.y()*.5,
+        body.z()*.5
       )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
@@ -138,14 +139,14 @@ ShipView.prototype.constructor = ShipView;
 function ShipSphere(world) {
   var options = {
     mass: .5,
-    radius: 1
+    radius: 2
   };
   this.sphere = new Sphere(options);
   this.sphere
       .setPosition(0.5, 0.5, 0.5)
       .setForce(.1, .1, .1)
       .setMomentum(.45, .45, .45)
-      .setVelocity(150,150,20);
+      .setVelocity(150,150,150);
 }
 
 ShipSphere.prototype.x = function() {

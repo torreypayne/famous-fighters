@@ -16,7 +16,7 @@ var UIEvent = require('famous/dom-renderers/events/UIEvent');
 function GameApp(scene, num) {
   var world = new physics.PhysicsEngine();
   var camera = new Camera(scene).setDepth(1000);
-  var numAsteroids = num || 60;
+  var numAsteroids = num || 150;
   var asteroids = [];
   var asteroidBodies = [];
   var bullets = [];

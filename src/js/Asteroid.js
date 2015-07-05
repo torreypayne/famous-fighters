@@ -64,7 +64,7 @@ Asteroid.prototype.isColliding = function(asteroids) {
       this.physBody.z() - asteroid.physBody.z()
     ];
     var dist = Math.pow(diffs[0],2) + Math.pow(diffs[1],2) + Math.pow(diffs[2], 2);
-    var comparison = (dist <= this.physBody.radius()*3 + asteroid.physBody.radius()*3);
+    var comparison = (dist <= this.physBody.radius() + asteroid.physBody.radius());
     if (this !== asteroid && comparison === true) {
       tooClose = true;
     }
@@ -81,13 +81,16 @@ function AsteroidView(game, physBody) {
   this.game = game;
   this
       .setAlign(
-        physBody.x()*.05,
-        physBody.y()*.05,
-        physBody.z()*.05
+        physBody.x()*.5,
+        physBody.y()*.5,
+        physBody.z()*.5
       )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(10, 10, 10);
+      .setAbsoluteSize(physBody.radius()*10,
+      physBody.radius()*10,
+      physBody.radius()*10
+  );
 }
 
 AsteroidView.prototype = Object.create(Node.prototype);

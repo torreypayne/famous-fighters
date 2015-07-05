@@ -29,7 +29,7 @@ BulletView.prototype.constructor = BulletView;
 function BulletSphere(ship, world) {
   var options = {
     mass: .5,
-    radius: .33
+    radius: .5
   };
   this.sphere = new Sphere(options);
   this.sphere
@@ -45,7 +45,6 @@ function BulletSphere(ship, world) {
         20*ship.body.getVelocity().y,
         20*ship.body.getVelocity().z
         );
-        // debugger;
 }
 
 BulletSphere.prototype.x = function() {
@@ -60,6 +59,10 @@ BulletSphere.prototype.z = function() {
   return this.sphere.getPosition().z;
 }
 
+BulletSphere.prototype.radius = function() {
+  return this.sphere.radius;
+}
+
 function BulletMesh(node) {
   this.skin = new Mesh(node);
   this.skin
@@ -71,16 +74,17 @@ function BulletMesh(node) {
 function Bullet(game, ship, world, asteroids) {
   this.world = world;
   this.ship = ship;
+  this.game = this.ship.game;
   this.physBody = new BulletSphere(ship, world);
   this.body = this.physBody.sphere;
   this.world.add(this.body);
   this.node = new BulletView(game, ship, this.physBody);
   this.mesh = new BulletMesh(this.node);
-  this.asteroids = asteroids;
+  this.asteroids = this.game.asteroids;
   this.update();
 }
 
-Bullet.prototype.isColliding = function(asteroids) {
+Bullet.prototype.isColliding = function() {
   var tooClose = false;
   this.asteroids.forEach(function(asteroid) {
     var diffs = [
@@ -89,7 +93,7 @@ Bullet.prototype.isColliding = function(asteroids) {
       this.physBody.z() - asteroid.physBody.z()
     ];
     var dist = Math.pow(diffs[0],2) + Math.pow(diffs[1],2) + Math.pow(diffs[2], 2);
-    var comparison = (dist <= this.body.radius + asteroid.physBody.radius());
+    var comparison = (dist <= this.body.radius + asteroid.body.radius);
     if (this !== asteroid && comparison === true) {
       tooClose = true;
     }
@@ -98,13 +102,13 @@ Bullet.prototype.isColliding = function(asteroids) {
   return tooClose;
 }
 
-Bullet.prototype.update = function(asteroids, time) {
+Bullet.prototype.update = function() {
   this.node.setPosition(
     this.physBody.x(),
     this.physBody.y(),
     this.physBody.z()
   );
-  if (this.isColliding(asteroids)) {
+  if (this.isColliding()) {
     console.log("Hit asteroid!");
   }
 }
