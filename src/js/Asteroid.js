@@ -75,6 +75,7 @@ Asteroid.prototype.isColliding = function(asteroids) {
 }
 
 Asteroid.prototype.blowUp = function() {
+  this.node.setAbsoluteSize(1,1,1);
   this.mesh.changeColor(new Color('blue'));
 }
 
@@ -92,9 +93,9 @@ function AsteroidView(game, physBody) {
       )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(physBody.radius()*10,
-      physBody.radius()*10,
-      physBody.radius()*10
+      .setAbsoluteSize(physBody.radius()*5,
+      physBody.radius()*5,
+      physBody.radius()*5
   );
 }
 
@@ -103,10 +104,7 @@ AsteroidView.prototype.constructor = AsteroidView;
 
 AsteroidView.prototype.onReceive = function onReceive(type, ev) {}
 
-AsteroidView.prototype.remove = function() {
-  // this.mesh.changeColor(new Color('blue'));
-  // this.game.ship.node.removeChild(this);
-}
+AsteroidView.prototype.remove = function() {}
 
 function AsteroidMesh(node) {
   this.skin = new Mesh(node);
