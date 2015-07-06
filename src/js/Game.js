@@ -18,9 +18,12 @@ var GameWall = require('./GameWall');
 function Game(scene, world, camera) {
   Node.call(this);
   scene.addChild(this);
-  this.setOrigin(0.5, 0.5, 0.5)
+  this
+      .setOrigin(0.5, 0.5, 0.5)
+      .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode('absolute', 'absolute', 'absolute')
-      .setAbsoluteSize(250, 250);
+      .setAbsoluteSize(250, 250)
+      .setProportionalSize(1, 1, 1);
   this.NUM_ASTEROIDS = 100;
   this.world = world;
   this.asteroids = [];
@@ -29,18 +32,16 @@ function Game(scene, world, camera) {
   this.ship = new Ship(scene, this, world);
   this.walls = [];
   world.add(this.ship.body);
-  this.setProportionalSize(1, 1, 1);
   this.clock = FamousEngine.getClock();
   for (var i = 0; i < this.NUM_ASTEROIDS; i++) {
     var asteroid = new Asteroid(this, this.ship, world, this.asteroids);
     this.addAsteroid(asteroid);
   }
-
   this.setupWalls();
   this.addUIEvent('click');
   this.addUIEvent('keydown');
   this.addUIEvent('keyup');
-  this.setRotation(1,0,0);
+  this.setRotation(0,0,0);
 
   document.addEventListener('keydown', function(event) {
     this.onReceive(event.type, event);
@@ -87,9 +88,9 @@ Game.prototype.addAsteroid = function(asteroid) {
 
 Game.prototype.onReceive = function onReceive(type, ev) {
   this.ship.onReceive(type, ev);
-  this.getChildren().forEach(function(child) {
-    child.onReceive && child.onReceive(type, ev);
-  });
+  // this.getChildren().forEach(function(child) {
+  //   child.onReceive && child.onReceive(type, ev);
+  // });
 }
 
 Game.prototype.setupWalls = function() {

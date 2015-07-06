@@ -3,9 +3,10 @@ var Mesh = require('famous/webgl-renderables/Mesh');
 var math = require('famous/math');
 var Color = require('famous/utilities/Color');
 var physics = require('famous/physics');
+var Force = physics.Force;
+var Vec3 = require('famous/math/Vec3');
 var Material = require('famous/webgl-materials/Material');
 var DOMElement = require('famous/dom-renderables/DOMElement');
-
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
@@ -17,7 +18,7 @@ function Ship(scene, game, world) {
   this.physBody = new ShipSphere(world);
   this.body = this.physBody.sphere;
   this.world.add(this.body);
-  this.node = new ShipView(game, this.physBody);
+  this.node = new ShipView(scene, this.physBody);
   this.mesh = new ShipMesh(this.node);
   this.bullets = [];
 }
@@ -41,30 +42,29 @@ Ship.prototype.isColliding = function(asteroids) {
 }
 
 Ship.prototype.power = function(impulse) {
-  // this.body.setVelocity(
-  //   this.body.getVelocity().x + 10*impulse[0],
-  //   this.body.getVelocity().y + 10*impulse[1],
-  //   this.body.getVelocity().z + 10*impulse[2]
-  // );
-  this.body.setVelocity(
-    150*impulse[0],
-    150*impulse[1],
-    150*impulse[2]
+  var pos = this.position();
+  var vector = new Vec3(
+    impulse[0],
+    impulse[1],
+    impulse[2]
   );
+  this.body.applyImpulse(vector);
 }
 
 Ship.prototype.spin = function(impulse) {
-  this.game.setRotation(
-    this.game.getRotation()[0] + 2* Math.PI * impulse[0]/180,
-    this.game.getRotation()[1] + 2* Math.PI * impulse[1]/180,
-    this.game.getRotation()[2] + 2* Math.PI * impulse[2]/180,
-    this.game.getRotation()[3] + 2* Math.PI * impulse[3]/180
+  var vector = new Vec3(
+    impulse[0],
+    impulse[1],
+    impulse[2],
+    impulse[3]
   );
-  // this.body.setAngularVelocity(
-  //   this.body.getAngularVelocity().x + impulse[0],
-  //   this.body.getAngularVelocity().y + impulse[1],
-  //   this.body.getAngularVelocity().z + impulse[2]
-  // )
+  this.body.applyTorque(vector);
+  this.node.setRotation(
+    this.node.getRotation()[0] + 2* Math.PI * impulse[0]/90,
+    this.node.getRotation()[1] + 2* Math.PI * impulse[1]/90,
+    this.node.getRotation()[2] + 2* Math.PI * impulse[2]/90,
+    this.node.getRotation()[3] + 2* Math.PI * impulse[3]/90
+  );
 }
 
 Ship.prototype.position = function() {
@@ -128,7 +128,7 @@ function ShipView(game, body) {
         body.y()*.5,
         body.z()*.5
       )
-      .setMountPoint(0.5, 0.5, 0.5)
+      .setMountPoint(1, 1, 0.5)
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(100, 100, 100);
 }
@@ -138,15 +138,13 @@ ShipView.prototype.constructor = ShipView;
 
 function ShipSphere(world) {
   var options = {
-    mass: .5,
+    mass: 1,
     radius: 2
   };
   this.sphere = new Sphere(options);
   this.sphere
-      .setPosition(0.5, 0.5, 0.5)
-      .setForce(.1, .1, .1)
-      .setMomentum(.45, .45, .45)
-      .setVelocity(150,150,150);
+      .setPosition(0.5, 0.5, 0.5);
+      this.sphere.setForce(0, 0, 10);
 }
 
 ShipSphere.prototype.x = function() {
@@ -167,9 +165,6 @@ function ShipMesh(node) {
       .setGeometry('Icosahedron', { detail: 10 })
       .setBaseColor(new Color('red'))
       ;
-
-  var image = Material.Texture('./images/star-wars-vader-tie-fighter.obj');
-  // var mix = Material.mix([image, [1,1,0,1]])
 }
 
 module.exports = Ship;

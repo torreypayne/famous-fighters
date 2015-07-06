@@ -17,11 +17,12 @@ function Asteroid(game, ship, world, asteroids) {
   }
   this.body = this.physBody.sphere;
   world.add(this.body);
-
+  this.ship = ship;
   this.node = new AsteroidView(game, this.physBody);
   this.mesh = new AsteroidMesh(this.node);
   this.asteroids = asteroids;
   this.game = game;
+  this.world = world;
 }
 
 
@@ -73,10 +74,14 @@ Asteroid.prototype.isColliding = function(asteroids) {
   return tooClose;
 }
 
+Asteroid.prototype.blowUp = function() {
+  this.mesh.changeColor(new Color('blue'));
+}
+
 
 function AsteroidView(game, physBody) {
   Node.call(this);
-  game.addChild(this);
+  game.ship.node.addChild(this);
   this.physBody = physBody;
   this.game = game;
   this
@@ -99,13 +104,18 @@ AsteroidView.prototype.constructor = AsteroidView;
 AsteroidView.prototype.onReceive = function onReceive(type, ev) {}
 
 AsteroidView.prototype.remove = function() {
-  this.game.removeChild(this);
+  // this.mesh.changeColor(new Color('blue'));
+  // this.game.ship.node.removeChild(this);
 }
 
 function AsteroidMesh(node) {
   this.skin = new Mesh(node);
   this.skin
       .setGeometry('Sphere');
+}
+
+AsteroidMesh.prototype.changeColor = function(color) {
+  this.skin.setBaseColor(color);
 }
 
 module.exports = Asteroid;

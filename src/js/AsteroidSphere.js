@@ -11,7 +11,7 @@ function AsteroidSphere(ship, world) {
   this.world = world;
   var options = {
     mass: 10,
-    radius: 10,
+    radius: 75,
   };
   this.ship = ship;
   this.sphere = new Sphere(options);

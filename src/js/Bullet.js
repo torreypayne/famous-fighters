@@ -9,9 +9,10 @@ var Sphere = physics.Sphere;
 
 function BulletView(game, ship, physBody) {
   Node.call(this);
-  game.addChild(this);
+  ship.node.addChild(this);
   this.physBody = physBody;
   this
+      .setOrigin(0.5, 0.5, 0.5)
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
       .setAbsoluteSize(50, 50, 50)
@@ -41,9 +42,9 @@ function BulletSphere(ship, world) {
       .setForce(.1, .1, .1)
       .setMomentum(.45, .45, .45)
       .setVelocity(
-        20*ship.body.getVelocity().x,
-        20*ship.body.getVelocity().y,
-        20*ship.body.getVelocity().z
+        100*ship.body.getVelocity().x,
+        100*ship.body.getVelocity().y,
+        100*ship.body.getVelocity().z
         );
 }
 
@@ -85,21 +86,21 @@ function Bullet(game, ship, world, asteroids) {
 }
 
 Bullet.prototype.isColliding = function() {
-  var tooClose = false;
+  var collisions = [];
   this.asteroids.forEach(function(asteroid) {
     var diffs = [
       this.physBody.x() - asteroid.physBody.x(),
       this.physBody.y() - asteroid.physBody.y(),
       this.physBody.z() - asteroid.physBody.z()
     ];
-    var dist = Math.pow(diffs[0],2) + Math.pow(diffs[1],2) + Math.pow(diffs[2], 2);
-    var comparison = (dist <= this.body.radius + asteroid.body.radius);
+    var dist = Math.pow(diffs[0], 2) + Math.pow(diffs[1], 2) + Math.pow(diffs[2], 2);
+    var comparison = (dist <= 2 * (this.body.radius + asteroid.body.radius));
     if (this !== asteroid && comparison === true) {
-      tooClose = true;
+      collisions.push(asteroid);
     }
   }.bind(this));
 
-  return tooClose;
+  return collisions;
 }
 
 Bullet.prototype.update = function() {
@@ -108,8 +109,12 @@ Bullet.prototype.update = function() {
     this.physBody.y(),
     this.physBody.z()
   );
-  if (this.isColliding()) {
+  var collisions = this.isColliding();
+  if (collisions.length > 0) {
     console.log("Hit asteroid!");
+    collisions.forEach(function(asteroid) {
+      asteroid.blowUp();
+    });
   }
 }
 
