@@ -1,16 +1,14 @@
 var Node = require('famous/core/Node');
-var math = require('famous/math');
 var physics = require('famous/physics');
 var FamousEngine = require('famous/core/FamousEngine');
-var DOMElement = require('famous/dom-renderables/DOMElement');
 var Gravity1D = physics.Gravity1D;
 var Gravity3D = physics.Gravity3D;
 var Color = require('famous/utilities/Color');
 var Sphere = physics.Sphere;
 var Wall = physics.Wall;
-var Bullet = require('./Bullet');
-var Ship = require('./Ship');
-var Asteroid = require('./Asteroid');
+var Bullet = require('./Bullet/Bullet');
+var Ship = require('./Ship/Ship');
+var Asteroid = require('./Asteroid/Asteroid');
 var UIEvent = require('famous/dom-renderers/events/UIEvent');
 var KeyboardEvent = require('famous/dom-renderers/events/KeyboardEvent');
 var GameWall = require('./GameWall');
@@ -88,9 +86,6 @@ Game.prototype.addAsteroid = function(asteroid) {
 
 Game.prototype.onReceive = function onReceive(type, ev) {
   this.ship.onReceive(type, ev);
-  // this.getChildren().forEach(function(child) {
-  //   child.onReceive && child.onReceive(type, ev);
-  // });
 }
 
 Game.prototype.setupWalls = function() {

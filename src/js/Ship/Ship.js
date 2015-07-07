@@ -1,16 +1,10 @@
-var Node = require('famous/core/Node');
-var Mesh = require('famous/webgl-renderables/Mesh');
-var math = require('famous/math');
-var Color = require('famous/utilities/Color');
 var physics = require('famous/physics');
 var Force = physics.Force;
 var Vec3 = require('famous/math/Vec3');
-var Material = require('famous/webgl-materials/Material');
-var DOMElement = require('famous/dom-renderables/DOMElement');
-var Gravity1D = physics.Gravity1D;
-var Gravity3D = physics.Gravity3D;
-var Sphere = physics.Sphere;
-var Bullet = require('./Bullet');
+var Bullet = require('../Bullet/Bullet');
+var ShipSphere = require('./ShipSphere');
+var ShipView = require('./ShipView');
+var ShipMesh = require('./ShipMesh');
 
 function Ship(scene, game, world) {
   this.game = game;
@@ -130,55 +124,6 @@ Ship.prototype.onReceive = function onReceive(type, ev) {
     default:
       console.log(ev.keyCode);
   }
-}
-
-function ShipView(game, body) {
-  Node.call(this);
-  game.addChild(this);
-  this
-      .setOrigin(0.5, 0.5, 0.5)
-      .setAlign(
-        body.x()*.5,
-        body.y()*.5,
-        body.z()*.5
-      )
-      .setMountPoint(1, 1, 0.5)
-      .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(100, 100, 100);
-}
-
-ShipView.prototype = Object.create(Node.prototype);
-ShipView.prototype.constructor = ShipView;
-
-function ShipSphere(world) {
-  var options = {
-    mass: 1,
-    radius: 2
-  };
-  this.sphere = new Sphere(options);
-  this.sphere
-      .setPosition(0.5, 0.5, 0.5);
-      this.sphere.setForce(0, 0, 10);
-}
-
-ShipSphere.prototype.x = function() {
-  return this.sphere.getPosition().x;
-}
-
-ShipSphere.prototype.y = function() {
-  return this.sphere.getPosition().y;
-}
-
-ShipSphere.prototype.z = function() {
-  return this.sphere.getPosition().z;
-}
-
-function ShipMesh(node) {
-  this.skin = new Mesh(node);
-  this.skin
-      .setGeometry('Icosahedron', { detail: 10 })
-      .setBaseColor(new Color('red'))
-      ;
 }
 
 module.exports = Ship;

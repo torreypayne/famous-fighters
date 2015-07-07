@@ -1,5 +1,3 @@
-var Node = require('famous/core/Node');
-var Mesh = require('famous/webgl-renderables/Mesh');
 var math = require('famous/math');
 var Color = require('famous/utilities/Color');
 var physics = require('famous/physics');
@@ -8,7 +6,9 @@ var Gravity3D = physics.Gravity3D;
 var Sphere = physics.Sphere;
 var DOMElement = require('famous/dom-renderables/DOMElement');
 var AsteroidSphere = require('./AsteroidSphere');
-var Bullet = require('./Bullet');
+var AsteroidView = require('./AsteroidView');
+var AsteroidMesh = require('./AsteroidMesh');
+var Bullet = require('../Bullet/Bullet');
 
 function Asteroid(game, ship, world, asteroids) {
   this.physBody = new AsteroidSphere(ship, world);
@@ -77,47 +77,6 @@ Asteroid.prototype.isColliding = function(asteroids) {
 Asteroid.prototype.blowUp = function() {
   this.node.setAbsoluteSize(1,1,1);
   this.mesh.changeColor(new Color('blue'));
-}
-
-
-function AsteroidView(game, physBody) {
-  Node.call(this);
-  game.ship.node.addChild(this);
-  this.physBody = physBody;
-  this.game = game;
-  this
-      .setAlign(
-        physBody.x()*.5,
-        physBody.y()*.5,
-        physBody.z()*.5
-      )
-      .setMountPoint(0.5, 0.5, 0.5)
-      .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(
-        physBody.radius()*5,
-        physBody.radius()*5,
-        physBody.radius()*5
-  );
-  this.addUIEvent('click');
-}
-
-AsteroidView.prototype = Object.create(Node.prototype);
-AsteroidView.prototype.constructor = AsteroidView;
-
-AsteroidView.prototype.onReceive = function onReceive(type, ev) {
-  console.log("Receiving clicks");
-}
-
-AsteroidView.prototype.remove = function() {}
-
-function AsteroidMesh(node) {
-  this.skin = new Mesh(node);
-  this.skin
-      .setGeometry('Sphere');
-}
-
-AsteroidMesh.prototype.changeColor = function(color) {
-  this.skin.setBaseColor(color);
 }
 
 module.exports = Asteroid;
