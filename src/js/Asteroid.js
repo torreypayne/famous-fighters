@@ -93,16 +93,20 @@ function AsteroidView(game, physBody) {
       )
       .setMountPoint(0.5, 0.5, 0.5)
       .setSizeMode(1, 1, 1)
-      .setAbsoluteSize(physBody.radius()*5,
-      physBody.radius()*5,
-      physBody.radius()*5
+      .setAbsoluteSize(
+        physBody.radius()*5,
+        physBody.radius()*5,
+        physBody.radius()*5
   );
+  this.addUIEvent('click');
 }
 
 AsteroidView.prototype = Object.create(Node.prototype);
 AsteroidView.prototype.constructor = AsteroidView;
 
-AsteroidView.prototype.onReceive = function onReceive(type, ev) {}
+AsteroidView.prototype.onReceive = function onReceive(type, ev) {
+  console.log("Receiving clicks");
+}
 
 AsteroidView.prototype.remove = function() {}
 

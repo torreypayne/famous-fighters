@@ -53,17 +53,31 @@ Ship.prototype.power = function(impulse) {
 
 Ship.prototype.spin = function(impulse) {
   var vector = new Vec3(
-    impulse[0],
-    impulse[1],
-    impulse[2],
-    impulse[3]
+    10*impulse[0],
+    10*impulse[1],
+    10*impulse[2],
+    10*impulse[3]
   );
   this.body.applyTorque(vector);
-  this.node.setRotation(
+  var rotations = [
     this.node.getRotation()[0] + 2* Math.PI * impulse[0]/90,
     this.node.getRotation()[1] + 2* Math.PI * impulse[1]/90,
     this.node.getRotation()[2] + 2* Math.PI * impulse[2]/90,
     this.node.getRotation()[3] + 2* Math.PI * impulse[3]/90
+  ];
+  rotations.forEach(function(value, idx) {
+    if (value > 1) {
+      rotations[idx] = -1;
+      console.log("What can I do here?");
+    } else if (value < -1) {
+      rotations[idx] = 1;
+    }
+  });
+  this.node.setRotation(
+    rotations[0],
+    rotations[1],
+    rotations[2],
+    rotations[3]
   );
 }
 
