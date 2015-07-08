@@ -18,15 +18,12 @@ function AsteroidView(game, physBody) {
         physBody.radius()*5,
         physBody.radius()*5
   );
-  this.addUIEvent('click');
 }
 
 AsteroidView.prototype = Object.create(Node.prototype);
 AsteroidView.prototype.constructor = AsteroidView;
 
-AsteroidView.prototype.onReceive = function onReceive(type, ev) {
-  console.log("Receiving clicks");
-}
+AsteroidView.prototype.onReceive = function onReceive(type, ev) {}
 
 AsteroidView.prototype.remove = function() {}
 

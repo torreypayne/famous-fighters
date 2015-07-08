@@ -36,9 +36,6 @@ function Game(scene, world, camera) {
     this.addAsteroid(asteroid);
   }
   this.setupWalls();
-  this.addUIEvent('click');
-  this.addUIEvent('keydown');
-  this.addUIEvent('keyup');
   this.setRotation(0,0,0);
 
   document.addEventListener('keydown', function(event) {

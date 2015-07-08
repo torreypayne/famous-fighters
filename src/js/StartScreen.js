@@ -7,9 +7,7 @@ var Color = require('famous/utilities/Color');
 
 function StartScreen(scene) {
   this.scene = scene;
-  // Node.call(this);
-  // var logo = scene.addChild(this);
-  var logo = scene.addChild();
+  var logo = this.logo = scene.addChild();
   var logoMesh = new DOMElement(logo, { tagName: 'img' })
       .setAttribute('src', 'https://res.cloudinary.com/tpayne/image/upload/s--xgC6kgR5--/q_jpegmini/v1436309519/Asteroids-Atari-2600-VCS_hnxkbb.jpg')
       ;
@@ -22,59 +20,40 @@ function StartScreen(scene) {
       .setProportionalSize(1, 1, 1)
       ;
 
-  var instructions = scene.addChild();
+  var instructions = this.instructions = scene.addChild();
   instructions
       .setSizeMode('absolute', 'absolute')
       .setAlign(0.45, 0.75)
       .setMountPoint(0.5, 0.5)
       .setOrigin(0.5, 0.5)
-      .setAbsoluteSize(650, 200)
+      .setAbsoluteSize(650, 250)
       .setProportionalSize(1, 1)
       ;
 
   new DOMElement(instructions, {
     tagName: 'h2',
-    content: "CONTROLS:<br><p>- Rotate the ship using the WASD keys.</p><p>- Move with the arrow keys.</p><p>- Shoot with the Space bar.</p>"
+    content: "<p style='color:white'>CONTROLS: Click to Start!!</p><p style='color:white'>- Rotate the ship using the WASD keys.</p><p style='color:white'>- Move with the arrow keys.</p><p style='color:white'>- Shoot with the Space bar.</p>"
   })
-      // .setProperty('position', 'absolute')
-      .setProperty('background-color', '#99FF99')
-      .setProperty('opacity', 1)
-  ;
-
-  //
-  // this
-  //     .setSizeMode('absolute', 'absolute')
-  //     .setAlign(0.5,-0.75)
-  //     .setMountPoint(0.5, 0.5)
-  //     .setOrigin(0.5, 0.5)
-  //     .setAbsoluteSize(750, 400)
-  //     .setProportionalSize(1, 1);
+      .setProperty('background-color', 'black')
+      .setProperty('opacity', .7)
+      .setProperty('padding', '5px')
+      ;
 
   var spinner = logo.addComponent({
     onUpdate: function(time) {
-      logo.setRotation(0, time / 1000, 0);
+      logo.setRotation(0, time / 1800, 0);
       logo.requestUpdateOnNextTick(spinner);
     }
   });
 
   logo.requestUpdate(spinner);
-  // this.el = new DOMElement(this,
-  //   {
-  //     tagName: 'h1',
-  //     content: "Welcome to 3D Asteroids! Rotate the ship using the W, A, S, D keys. Move the ship using the arrow keys.  Shoot a bullet using the space button."
-  //   })
-  //     .setProperty('position', 'absolute')
-  //     .setProperty('background-color', 'grey')
-  //     .setProperty('opacity', 0.75)
-  // ;
-
 }
 
 StartScreen.prototype = Object.create(Node.prototype);
 StartScreen.prototype.constructor = StartScreen;
 
 StartScreen.prototype.removeScreen = function() {
-  this.scene.removeChild(this);
+  this.scene.removeChild(this.instructions) && this.scene.removeChild(this.logo);
 }
 
 module.exports = StartScreen;

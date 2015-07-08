@@ -44,6 +44,7 @@ GameApp.prototype.play = function() {
 }
 
 GameApp.prototype.onReceive = function(type, ev) {
+  document.removeEventListener('click');
   this.startScene.removeScreen();
   this.play();
 }

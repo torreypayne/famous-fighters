@@ -38,9 +38,9 @@ Ship.prototype.isColliding = function(asteroids) {
 Ship.prototype.power = function(impulse) {
   var pos = this.position();
   var vector = new Vec3(
-    impulse[0],
-    impulse[1],
-    impulse[2]
+    5*impulse[0],
+    5*impulse[1],
+    5*impulse[2]
   );
   this.body.applyImpulse(vector);
 }
