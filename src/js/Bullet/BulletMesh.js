@@ -5,7 +5,7 @@ function BulletMesh(node) {
   this.skin = new Mesh(node);
   this.skin
       .setGeometry('Sphere', { detail: 50 })
-      .setBaseColor(new Color('yellow'))
+      .setBaseColor(new Color('pink'))
       ;
 }
 

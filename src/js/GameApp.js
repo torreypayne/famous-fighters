@@ -44,10 +44,8 @@ GameApp.prototype.play = function() {
 }
 
 GameApp.prototype.onReceive = function(type, ev) {
-  if (type === "click") {
-    this.startScene.removeScreen();
-    this.play();
-  }
+  this.startScene.removeScreen();
+  this.play();
 }
 
 module.exports = GameApp;

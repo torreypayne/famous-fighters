@@ -25,8 +25,6 @@ function Asteroid(game, ship, world, asteroids) {
   this.world = world;
 }
 
-
-
 Asteroid.prototype.remove = function() {
   this.physBody.remove();
   this.node.remove();
